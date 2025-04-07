@@ -1,0 +1,11 @@
+.login-card{
+    width: 350px;
+    height: 400px;
+}
+
+.login-page-card-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}

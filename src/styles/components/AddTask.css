@@ -1,0 +1,10 @@
+.add-task-label{
+    min-width: 120px;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 5rem;
+}
+
+.add-task-label-input{
+    width: 210px;
+}
