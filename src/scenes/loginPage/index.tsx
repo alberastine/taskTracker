@@ -19,18 +19,21 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [showLogin, setShowLogin] = useState(true);
 
+
   const navigate = useNavigate();
 
   const onSubmit = async (data: ILoginForm) => {
     try {
       const response = await axios.post("/api/login", data);
-      if (response.status === 200) {
+      if (response.status === 202) {
         navigate("/home");
       }
     } catch (err) {
       setError("Invalid username or password");
     }
   };
+
+  
 
   const handleSignUp = () => {
     setShowLogin(false);
