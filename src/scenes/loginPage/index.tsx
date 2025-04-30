@@ -19,7 +19,6 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [showLogin, setShowLogin] = useState(true);
 
-
   const navigate = useNavigate();
 
   const onSubmit = async (data: ILoginForm) => {
@@ -96,14 +95,14 @@ const LoginPage = () => {
 
         {showLogin === true ? (
           <Label>
-            Don't have an account? {""}
+            Don't have an account?
             <a onClick={handleSignUp} className="cursor-pointer text-blue-500">
               Create an account
             </a>
           </Label>
         ) : (
           <Label>
-            Already have an account? {""}
+            Already have an account?
             <a onClick={handleLogin} className="cursor-pointer text-blue-500">
               Login to an account
             </a>
