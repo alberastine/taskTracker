@@ -3,13 +3,14 @@ import WidgetWrapper from "./WidgetWrapper";
 import "../styles/components/UserProfile.css";
 import { Card } from "flowbite-react";
 
-import { useUser } from "../context/userContext";
+import { useContext } from 'react';
+import { UserContext } from "../context/userContext";
 
 const UserProfile = () => {
-  const user = useUser();
+  const { user } = useContext(UserContext);
 
   if (!user) {
-    return <div>User not found</div>; // Handle case where user is not logged in
+    return <div>User not found</div>;
   }
 
   return (

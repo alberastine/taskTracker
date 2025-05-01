@@ -1,51 +1,48 @@
-// src/context/UserContext.tsx
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import { createContext, ReactNode, useState, useEffect } from "react";
 import axios from "../api/axios";
 
 interface Task {
-    id: string;
-    description: string;
-  }
-  
-  interface User {
-    id: string;
-    username: string;
-    gmail: string;
-    tasks: Task[];
-  }
+  id: string;
+  title: string;
+  description: string;
+  status: string; 
+  dueDate: string;
+}
 
-export const UserContext = createContext<User | null>(null);
+interface User {
+  username: string;
+  gmail: string;
+  tasks: Task[];
+}
 
-interface UserProviderProps {
+interface UserContextType {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+export const UserContext = createContext<UserContextType>({
+  user: null,
+  setUser: () => {},
+});
+
+interface UserContextProviderProps {
   children: ReactNode;
 }
 
-export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get("/profile");
-        setUser(response.data.user);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
+    axios.get("/profile").then((res) => {
+      setUser(res.data.user);
+    }).catch((err) => {
+      console.error("Error fetching user profile:", err);
+    });
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
-
-export const useUser = (): User | null => {
-    return React.useContext(UserContext);
-  };
