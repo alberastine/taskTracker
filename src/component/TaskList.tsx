@@ -1,16 +1,16 @@
 import { Badge, Checkbox, Table } from "flowbite-react";
-import TaskData from "../component/UserData.json";
 import AddTask from "./AddTask";
 import TaskListEditDetails from "./TaskListEditDetails";
-interface TaskData {
-  id: number;
-  taskName: string;
-  dateStarted: string;
-  deadline: string;
-  status: string;
-}
+
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 
 const TaskList = () => {
+  const { user } = useContext(UserContext);
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div className="overflow-x-auto p-4">
@@ -26,26 +26,26 @@ const TaskList = () => {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {TaskData.map((task) => (
+            {user.tasks.map((task) => (
               <Table.Row
                 key={task.id}
                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
               >
                 <Table.Cell className="p-4">
-                  <Checkbox checked={task.status === "completed"} />
+                  <Checkbox checked={task.status === "Completed"} />
                 </Table.Cell>
                 <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {task.taskName}
                 </Table.Cell>
-                <Table.Cell>{task.dateStarted}</Table.Cell>
-                <Table.Cell>{task.deadline}</Table.Cell>
+                <Table.Cell>{new Date(task.dateStarted).toLocaleDateString()}</Table.Cell>
+                <Table.Cell>{new Date(task.deadline).toLocaleDateString()}</Table.Cell>
                 <Table.Cell>
                   <p className="text-sm">
                     <Badge
                       color={
-                        task.status === "completed"
+                        task.status === "Completed"
                           ? "success"
-                          : task.status === "late"
+                          : task.status === "Late"
                             ? "failure"
                             : "gray"
                       }

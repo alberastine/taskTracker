@@ -6,7 +6,11 @@ import { Card } from "flowbite-react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
-const UserProfile = ({ setActiveWidget }: { setActiveWidget: (key: number) => void }) => {
+const UserProfile = ({
+  setActiveWidget,
+}: {
+  setActiveWidget: (key: number) => void;
+}) => {
   const { user } = useContext(UserContext);
 
   if (!user) {
@@ -75,55 +79,28 @@ const UserProfile = ({ setActiveWidget }: { setActiveWidget: (key: number) => vo
                 View all
               </button>
             </div>
-            <div className="flow-root">
-              <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                <li className="py-3 sm:py-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        Develop Feature X
-                      </p>
-                      <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        2023-10-01 to 2023-10-15
-                      </p>
+            {user.tasks.map((task) => (
+              <div className="flow-root">
+                <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                  <li className="py-3 sm:py-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                          {task.taskName}
+                        </p>
+                        <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                          {new Date(task.dateStarted).toLocaleDateString()} to{" "}
+                          {new Date(task.deadline).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                        {task.status}
+                      </div>
                     </div>
-                    <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      ongoing
-                    </div>
-                  </div>
-                </li>
-                <li className="py-3 sm:py-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        Create Dashboard UI
-                      </p>
-                      <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        2023-10-10 to 2023-10-25
-                      </p>
-                    </div>
-                    <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      completed
-                    </div>
-                  </div>
-                </li>
-                <li className="py-3 sm:py-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        Implement Authentication
-                      </p>
-                      <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        2023-10-18 to 2023-10-30
-                      </p>
-                    </div>
-                    <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      Late
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
+                  </li>
+                </ul>
+              </div>
+            ))}
           </Card>
         </div>
       </div>

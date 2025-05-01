@@ -3,10 +3,10 @@ import axios from "../api/axios";
 
 interface Task {
   id: string;
-  title: string;
-  description: string;
-  status: string; 
-  dueDate: string;
+  taskName: string;
+  dateStarted: string;
+  deadline: string;
+  status: string;
 }
 
 interface User {
@@ -46,7 +46,6 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   useEffect(() => {
     fetchUser();
   }, []);
-
 
   return (
     <UserContext.Provider value={{ user, setUser, fetchUser }}>

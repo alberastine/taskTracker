@@ -3,7 +3,7 @@ import TaskData from "../component/UserData.json";
 import { useState } from "react";
 
 interface TaskData {
-  id: number;
+  id: string;
   taskName: string;
   dateStarted: string;
   deadline: string;
@@ -40,10 +40,10 @@ const TaskListEditDetails = ({ task }: TaskListEditDetailsProps) => {
               <strong>Task Name:</strong> {task.taskName}
             </p>
             <p>
-              <strong>Date Started:</strong> {task.dateStarted}
+              <strong>Date Started:</strong> {new Date(task.dateStarted).toLocaleDateString()}
             </p>
             <p>
-              <strong>Deadline:</strong> {task.deadline}
+              <strong>Deadline:</strong> {new Date(task.deadline).toLocaleDateString()}
             </p>
             <p>
               <strong>Status:</strong> {task.status}

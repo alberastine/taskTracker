@@ -5,7 +5,6 @@ import { AxiosError } from "axios";
 import { Link } from "react-router-dom";
 
 import axios from "../../api/axios";
-import toast from "react-hot-toast";
 
 import "../../styles/scenes/login.css";
 
@@ -48,7 +47,6 @@ const SignUpPage = () => {
         gmail,
         password,
       });
-      toast(response.data.message || "User created successfully");
       setSuccess(response.data.message || "User created successfully");
       setError("");
 
