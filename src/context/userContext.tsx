@@ -18,11 +18,13 @@ interface User {
 interface UserContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  fetchUser: () => Promise<void>;
 }
 
 export const UserContext = createContext<UserContextType>({
   user: null,
   setUser: () => {},
+  fetchUser: async () => {},
 });
 
 interface UserContextProviderProps {
@@ -32,16 +34,22 @@ interface UserContextProviderProps {
 export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    axios.get("/profile").then((res) => {
+  const fetchUser = async () => {
+    try {
+      const res = await axios.get("/profile");
       setUser(res.data.user);
-    }).catch((err) => {
-      console.error("Error fetching user profile:", err);
-    });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
   }, []);
 
+
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, fetchUser }}>
       {children}
     </UserContext.Provider>
   );

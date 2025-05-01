@@ -2,9 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import HomePage from "./scenes/homePage";
 import LoginPage from "./scenes/loginPage";
-import UserProfile from "./component/UserProfile";
 
 import { UserContextProvider } from "./context/userContext";
+import SignUpPage from "./scenes/signupPage";
 
 const App: React.FC = () => {
   return (
@@ -12,8 +12,8 @@ const App: React.FC = () => {
       <UserContextProvider>
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/profile" element={<UserProfile />} />
       </Routes>
       </UserContextProvider>
     </BrowserRouter>

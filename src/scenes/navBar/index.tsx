@@ -16,7 +16,6 @@ const NavBar = () => {
     try {
       await axios.post("/logout");
       setUser(null);
-
       navigate("/");
     } catch (error) {
       console.error("Logout error:", error);

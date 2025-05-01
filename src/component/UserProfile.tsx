@@ -3,10 +3,10 @@ import WidgetWrapper from "./WidgetWrapper";
 import "../styles/components/UserProfile.css";
 import { Card } from "flowbite-react";
 
-import { useContext } from 'react';
+import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
-const UserProfile = () => {
+const UserProfile = ({ setActiveWidget }: { setActiveWidget: (key: number) => void }) => {
   const { user } = useContext(UserContext);
 
   if (!user) {
@@ -66,14 +66,14 @@ const UserProfile = () => {
           <Card className="max-w-sm">
             <div className="mb-4 flex items-center justify-between">
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-                Latest Customers
+                Latest Tasks
               </h5>
-              <a
-                href="#"
+              <button
+                onClick={() => setActiveWidget(1)}
                 className="text-sm font-medium text-cyan-600 hover:underline dark:text-cyan-500"
               >
                 View all
-              </a>
+              </button>
             </div>
             <div className="flow-root">
               <ul className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -81,14 +81,14 @@ const UserProfile = () => {
                   <div className="flex items-center space-x-4">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        Neil Sims
+                        Develop Feature X
                       </p>
                       <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        email@windster.com
+                        2023-10-01 to 2023-10-15
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $320
+                      ongoing
                     </div>
                   </div>
                 </li>
@@ -96,14 +96,14 @@ const UserProfile = () => {
                   <div className="flex items-center space-x-4">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        Bonnie Green
+                        Create Dashboard UI
                       </p>
                       <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        email@windster.com
+                        2023-10-10 to 2023-10-25
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $3467
+                      completed
                     </div>
                   </div>
                 </li>
@@ -111,44 +111,14 @@ const UserProfile = () => {
                   <div className="flex items-center space-x-4">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        Michael Gough
+                        Implement Authentication
                       </p>
                       <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        email@windster.com
+                        2023-10-18 to 2023-10-30
                       </p>
                     </div>
                     <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $67
-                    </div>
-                  </div>
-                </li>
-                <li className="py-3 sm:py-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        Lana Byrd
-                      </p>
-                      <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        email@windster.com
-                      </p>
-                    </div>
-                    <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $367
-                    </div>
-                  </div>
-                </li>
-                <li className="pb-0 pt-3 sm:pt-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                        Thomes Lean
-                      </p>
-                      <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        email@windster.com
-                      </p>
-                    </div>
-                    <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                      $2367
+                      Late
                     </div>
                   </div>
                 </li>

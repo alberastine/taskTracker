@@ -1,18 +1,17 @@
 import { Button, Label, TextInput, Checkbox, Alert } from "flowbite-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/userContext";
+import { useState, useContext } from "react";
+
 import toast from "react-hot-toast";
 import axios from "../../api/axios";
 
-// css import
 import "../../styles/scenes/login.css";
-import { useState } from "react";
-// import axios from "axios";
-
-import SignUpPage from "../signupPage";
 
 const LoginPage = () => {
+  const { fetchUser } = useContext(UserContext);
+
   const [error, setError] = useState("");
-  const [showLogin, setShowLogin] = useState(true);
 
   const navigate = useNavigate();
 
@@ -20,7 +19,6 @@ const LoginPage = () => {
     gmail: "",
     password: "",
   });
-
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,25 +28,19 @@ const LoginPage = () => {
       const response = await axios.post("/login", { gmail, password });
 
       if (response.data.error) {
+        setError("Incorrect email or password");
         toast.error(response.data.error);
-        console.log(response.data.error);
       } else {
+        await fetchUser();
         setData({ gmail: "", password: "" });
-        toast.success("User login successfully");
+        setError("");
+        toast("User login successfully");
         navigate("/home");
       }
     } catch (error) {
-      console.error(error);
+      setError("Email or password is incorrect");
       toast.error("Something went wrong");
     }
-  };
-
-  const handleSignUp = () => {
-    setShowLogin(false);
-  };
-
-  const handleLogin = () => {
-    setShowLogin(true);
   };
 
   return (
@@ -57,68 +49,49 @@ const LoginPage = () => {
         className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg"
         onSubmit={onSubmit}
       >
-        {!showLogin ? (
-          <SignUpPage />
-        ) : (
-          <>
-            <h2 className="mb-4 text-xl font-semibold">Login</h2>
+        <h2 className="mb-4 text-xl font-semibold">Login</h2>
 
-            {error && (
-              <Alert color="failure" onDismiss={() => setError("")}>
-                {error}
-              </Alert>
-            )}
-            <div className="mb-4">
-              <TextInput
-                id="username"
-                type="email"
-                placeholder="Email"
-                required={true}
-                value={data.gmail}
-                onChange={(e) => setData({ ...data, gmail: e.target.value })}
-              />
-            </div>
-            <div className="mb-4">
-              <TextInput
-                id="password"
-                type="password"
-                placeholder="Password"
-                required={true}
-                value={data.password}
-                onChange={(e) => setData({ ...data, password: e.target.value })}
-              />
-            </div>
-            <div className="mb-4 flex items-center">
-              <Checkbox id="remember" />
-              <Label htmlFor="remember" className="ml-2">
-                Remember me
-              </Label>
-            </div>
-            <Button
-              type="submit"
-              gradientDuoTone="purpleToBlue"
-              className="w-full"
-            >
-              Sign in
-            </Button>
-          </>
+        {error && (
+          <Alert color="failure" onDismiss={() => setError("")}>
+            {error}
+          </Alert>
         )}
+        <div className="mb-4">
+          <TextInput
+            id="username"
+            type="email"
+            placeholder="Email"
+            required={true}
+            value={data.gmail}
+            onChange={(e) => setData({ ...data, gmail: e.target.value })}
+          />
+        </div>
+        <div className="mb-4">
+          <TextInput
+            id="password"
+            type="password"
+            placeholder="Password"
+            required={true}
+            value={data.password}
+            onChange={(e) => setData({ ...data, password: e.target.value })}
+          />
+        </div>
+        <div className="mb-4 flex items-center">
+          <Checkbox id="remember" />
+          <Label htmlFor="remember" className="ml-2">
+            Remember me
+          </Label>
+        </div>
+        <Button type="submit" gradientDuoTone="purpleToBlue" className="w-full">
+          Sign in
+        </Button>
 
-        {showLogin === true ? (
-          <Label>
-            Don't have an account?
-            <a onClick={handleSignUp} className="cursor-pointer text-blue-500">
-              Create an account
-            </a>
-          </Label>
-        ) : (
-          <Label>
-            Already have an account?
-            <a onClick={handleLogin} className="cursor-pointer text-blue-500">
-              Login to an account
-            </a>
-          </Label>
-        )}
+        <Label className="mt-4 block text-center">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-500 hover:underline">
+            Create an account
+          </Link>
+        </Label>
       </form>
     </div>
   );

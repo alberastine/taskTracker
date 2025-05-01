@@ -11,7 +11,7 @@ const HomePage = () => {
   const renderWidget = (key: number) => {
     switch (key) {
       case 0:
-        return <UserProfile />;
+        return <UserProfile setActiveWidget={setActiveWidget}/>;
       case 1:
         return <TaskList />;
       case 2:

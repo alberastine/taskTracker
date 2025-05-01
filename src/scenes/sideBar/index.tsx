@@ -11,9 +11,7 @@ const SibeBar = ({
 }) => {
   return (
     <>
-      <Sidebar
-        className="h-screen"
-      >
+      <Sidebar className="h-screen">
         <Sidebar.Items>
           <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
             Task Tracker
