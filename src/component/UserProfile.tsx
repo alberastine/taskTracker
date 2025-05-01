@@ -3,7 +3,15 @@ import WidgetWrapper from "./WidgetWrapper";
 import "../styles/components/UserProfile.css";
 import { Card } from "flowbite-react";
 
+import { useUser } from "../context/userContext";
+
 const UserProfile = () => {
+  const user = useUser();
+
+  if (!user) {
+    return <div>User not found</div>; // Handle case where user is not logged in
+  }
+
   return (
     <WidgetWrapper>
       <div className="user-profile-container">
@@ -14,8 +22,8 @@ const UserProfile = () => {
               <p>Account</p>
             </div>
             <div className="user-profile-info">
-              <h2>John Doe</h2>
-              <p>john.doe@example.com</p>
+              <h2>{user.username}</h2>
+              <p>{user.gmail}</p>
             </div>
           </div>
           <div className="user-profile-body-container">

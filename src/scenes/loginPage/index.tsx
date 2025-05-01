@@ -1,38 +1,47 @@
 import { Button, Label, TextInput, Checkbox, Alert } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import axios from "../../api/axios";
 
 // css import
 import "../../styles/scenes/login.css";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import axios from "axios";
+// import axios from "axios";
 
 import SignUpPage from "../signupPage";
 
-interface ILoginForm {
-  username: string;
-  password: string;
-}
-
 const LoginPage = () => {
-  const { register, handleSubmit } = useForm<ILoginForm>();
   const [error, setError] = useState("");
   const [showLogin, setShowLogin] = useState(true);
 
   const navigate = useNavigate();
 
-  const onSubmit = async (data: ILoginForm) => {
+  const [data, setData] = useState<{ gmail: string; password: string }>({
+    gmail: "",
+    password: "",
+  });
+
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { gmail, password } = data;
+
     try {
-      const response = await axios.post("/api/login", data);
-      if (response.status === 202) {
+      const response = await axios.post("/login", { gmail, password });
+
+      if (response.data.error) {
+        toast.error(response.data.error);
+        console.log(response.data.error);
+      } else {
+        setData({ gmail: "", password: "" });
+        toast.success("User login successfully");
         navigate("/home");
       }
-    } catch (err) {
-      setError("Invalid username or password");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
     }
   };
-
-  
 
   const handleSignUp = () => {
     setShowLogin(false);
@@ -46,7 +55,7 @@ const LoginPage = () => {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <form
         className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={onSubmit}
       >
         {!showLogin ? (
           <SignUpPage />
@@ -62,19 +71,21 @@ const LoginPage = () => {
             <div className="mb-4">
               <TextInput
                 id="username"
-                type="text"
-                placeholder="Enter your username"
-                {...register("username")}
+                type="email"
+                placeholder="Email"
                 required={true}
+                value={data.gmail}
+                onChange={(e) => setData({ ...data, gmail: e.target.value })}
               />
             </div>
             <div className="mb-4">
               <TextInput
                 id="password"
                 type="password"
-                placeholder="••••••••"
-                {...register("password")}
+                placeholder="Password"
                 required={true}
+                value={data.password}
+                onChange={(e) => setData({ ...data, password: e.target.value })}
               />
             </div>
             <div className="mb-4 flex items-center">
