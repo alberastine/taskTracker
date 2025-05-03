@@ -79,8 +79,8 @@ const UserProfile = ({
                 View all
               </button>
             </div>
-            {user.tasks.map((task) => (
-              <div className="flow-root">
+            {user.tasks.map((task, index) => (
+              <div key={task.id || index} className="flow-root">
                 <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                   <li className="py-3 sm:py-4">
                     <div className="flex items-center space-x-4">

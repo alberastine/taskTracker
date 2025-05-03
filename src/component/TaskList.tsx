@@ -26,13 +26,13 @@ const TaskList = () => {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {user.tasks.map((task) => (
+            {user.tasks.map((task, index) => (
               <Table.Row
-                key={task.id}
+                key={task.id || index}
                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
               >
                 <Table.Cell className="p-4">
-                  <Checkbox checked={task.status === "Completed"} />
+                  <Checkbox checked={task.status === "Completed"} readOnly />
                 </Table.Cell>
                 <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {task.taskName}

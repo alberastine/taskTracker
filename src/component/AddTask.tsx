@@ -73,7 +73,7 @@ const AddTask = () => {
         <Modal.Body>
           <form onSubmit={handleSave}>
             <div className="space-y-2">
-              <p className="flex">
+              <div className="flex">
                 <strong className="add-task-label">Task Name:</strong>
                 <TextInput
                   className="add-task-label-input"
@@ -82,9 +82,9 @@ const AddTask = () => {
                     setData({ ...data, taskName: e.target.value })
                   }
                 />
-              </p>
+              </div>
 
-              <p className="flex">
+              <div className="flex">
                 <strong className="add-task-label">Date Started:</strong>
                 <Datepicker
                   value={data.dateStarted}
@@ -95,9 +95,9 @@ const AddTask = () => {
                     })
                   }
                 />
-              </p>
+              </div>
 
-              <p className="flex">
+              <div className="flex">
                 <strong className="add-task-label">Deadline:</strong>
                 <Datepicker
                   value={data.deadline}
@@ -108,9 +108,9 @@ const AddTask = () => {
                     })
                   }
                 />
-              </p>
+              </div>
 
-              <p className="flex">
+              <div className="flex">
                 <strong className="add-task-label">Status:</strong>
                 <Select
                   value={data.status}
@@ -121,7 +121,7 @@ const AddTask = () => {
                   <option value="Completed">Completed</option>
                   <option value="Late">Late</option>
                 </Select>
-              </p>
+              </div>
 
               {error && <p className="text-sm text-red-500">{error}</p>}
             </div>
