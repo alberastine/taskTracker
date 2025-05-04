@@ -20,21 +20,20 @@ const UserProfile = ({
   return (
     <WidgetWrapper>
       <div className="user-profile-container">
-        <div className="user-profile-left">
+        <Card className="user-profile-left">
           <div className="user-profile-header">
             <div className="user-profile-avatar">
-              <RxAvatar size={200} />
-              <p>Account</p>
-            </div>
-            <div className="user-profile-info">
-              <h2>{user.username}</h2>
-              <p>{user.gmail}</p>
+              <RxAvatar size={200}/>
+              <div className="user-profile-info">
+                <h2 className="dark:text-white">{user.username}</h2>
+                <p>{user.gmail}</p>
+              </div>
             </div>
           </div>
           <div className="user-profile-body-container">
             <div className="user-profile-body">
               <div className="user-profile-body-label">
-                <p>Username</p>
+                <p className="dark:text-white">Username</p>
               </div>
               <div className="user-profile-body-input-container">
                 <input className="user-profile-body-input" />
@@ -42,7 +41,7 @@ const UserProfile = ({
             </div>
             <div className="user-profile-body">
               <div className="user-profile-body-label">
-                <p>Email</p>
+                <p className="dark:text-white">Email</p>
               </div>
               <div className="user-profile-body-input-container">
                 <input className="user-profile-body-input" />
@@ -50,7 +49,7 @@ const UserProfile = ({
             </div>
             <div className="user-profile-body">
               <div className="user-profile-body-label">
-                <p>Password</p>
+                <p className="dark:text-white">Password</p>
               </div>
               <div className="user-profile-body-input-container">
                 <input className="user-profile-body-input" />
@@ -58,14 +57,14 @@ const UserProfile = ({
             </div>
             <div className="user-profile-body">
               <div className="user-profile-body-label">
-                <p>Full name</p>
+                <p className="dark:text-white">Full name</p>
               </div>
               <div className="user-profile-body-input-container">
                 <input className="user-profile-body-input" />
               </div>
             </div>
           </div>
-        </div>
+        </Card>
         <div className="user-profile-right">
           <Card className="max-w-sm">
             <div className="mb-4 flex items-center justify-between">

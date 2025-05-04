@@ -4,19 +4,20 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   border-bottom: 1px solid #e0e0e0;
+  gap: 1rem;
 }
 
 .user-profile-left{
-  width: 50%;
+  width: 40%;
 }
 
 .user-profile-right{
   width: 50%;
-  padding: 1rem;
 }
 
 .user-profile-header {
   display: flex;
+  justify-content: center;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -25,7 +26,6 @@
 }
 
 .user-profile-avatar p {
-  margin-left: 1rem;
   font-size: 1.5rem;
 }
 
