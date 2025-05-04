@@ -20,7 +20,10 @@ const UserProfile = ({
   return (
     <WidgetWrapper>
       <div className="user-profile-container">
-        <Card className="user-profile-left">
+        <Card className="user-profile-left" style={{
+              border: "none",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}>
           <div className="user-profile-header">
             <div className="user-profile-avatar">
               <RxAvatar size={200}/>
@@ -66,7 +69,10 @@ const UserProfile = ({
           </div>
         </Card>
         <div className="user-profile-right">
-          <Card className="max-w-sm">
+          <Card className="max-w-sm" style={{
+              border: "none",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}>
             <div className="mb-4 flex items-center justify-between">
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Latest Tasks

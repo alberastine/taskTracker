@@ -1,8 +1,11 @@
 import WidgetWrapper from "./WidgetWrapper";
-import "../styles/components/Calendar.css";
+
 import type { BadgeProps, CalendarProps } from "antd";
 import { Badge, Calendar } from "antd";
 import type { Dayjs } from "dayjs";
+import { Card } from "flowbite-react";
+
+import "../styles/components/Calendar.css";
 
 const getListData = (value: Dayjs) => {
   let listData: { type: string; content: string }[] = []; // Specify the type of listData
@@ -76,8 +79,26 @@ const TaskCalendar = () => {
 
   return (
     <WidgetWrapper>
-      <div className="calendar-container">
-        <Calendar cellRender={cellRender} />;
+      <div className="calendar-main-container">
+        <div className="calenda-side-event">
+          <Card
+            className="max-w-sm"
+            style={{
+              border: "none",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Add Event
+            </h5>
+            <p className="font-normal text-gray-700 dark:text-gray-400">
+              Drag and drop to add event
+            </p>
+          </Card>
+        </div>
+        <div className="calendar-container">
+          <Calendar cellRender={cellRender} />
+        </div>
       </div>
     </WidgetWrapper>
   );
