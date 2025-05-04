@@ -2,9 +2,12 @@ import { RxAvatar } from "react-icons/rx";
 import WidgetWrapper from "./WidgetWrapper";
 import "../styles/components/UserProfile.css";
 import { Card } from "flowbite-react";
+import { PieChart } from "@mui/x-charts/PieChart";
 
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+
+type TaskStatus = "Completed" | "Ongoing" | "Late";
 
 const UserProfile = ({
   setActiveWidget,
@@ -17,16 +20,34 @@ const UserProfile = ({
     return <div>User not found</div>;
   }
 
+  const initialStatusCounts: Record<TaskStatus, number> = {
+    Completed: 0,
+    Ongoing: 0,
+    Late: 0,
+  };
+
+  const statusCounts = user.tasks.reduce(
+    (acc, task) => {
+      if (["Completed", "Ongoing", "Late"].includes(task.status)) {
+        acc[task.status as TaskStatus]++;
+      }
+      return acc;
+    },
+    { ...initialStatusCounts },
+  );
+
   return (
     <WidgetWrapper>
       <div className="user-profile-container">
-        <Card className="user-profile-left" style={{
-              border: "none",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            }}>
+        <Card
+          className="user-profile-left"
+          style={{
+            border: "none",
+          }}
+        >
           <div className="user-profile-header">
             <div className="user-profile-avatar">
-              <RxAvatar size={200}/>
+              <RxAvatar size={200} />
               <div className="user-profile-info">
                 <h2 className="dark:text-white">{user.username}</h2>
                 <p>{user.gmail}</p>
@@ -69,11 +90,16 @@ const UserProfile = ({
           </div>
         </Card>
         <div className="user-profile-right">
-          <Card className="max-w-sm" style={{
+          <Card
+            className="max-w-sm"
+            style={{
               border: "none",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            }}>
-            <div className="mb-4 flex items-center justify-between">
+              maxHeight: "34%",
+              overflow: "auto",
+            }}
+          >
+            <div className="mb-4 flex items-center justify-between ">
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Latest Tasks
               </h5>
@@ -106,6 +132,36 @@ const UserProfile = ({
                 </ul>
               </div>
             ))}
+          </Card>
+          <Card
+            className="max-w-sm"
+            style={{
+              border: "none",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              marginTop: "1rem",
+            }}
+          >
+            <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+              Progress Chart
+            </h5>
+            <PieChart
+              colors={["#A7F3D0", "#D1D5DB", "#FCA5A5"]}
+              series={[
+                {
+                  data: [
+                    {
+                      id: 0,
+                      value: statusCounts.Completed,
+                      label: "Completed",
+                    },
+                    { id: 1, value: statusCounts.Ongoing, label: "Ongoing" },
+                    { id: 2, value: statusCounts.Late, label: "Late" },
+                  ],
+                },
+              ]}
+              width={200}
+              height={200}
+            />
           </Card>
         </div>
       </div>

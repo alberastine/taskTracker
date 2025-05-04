@@ -1,5 +1,5 @@
 .user-profile-container {
-  display: flex;  
+  display: flex;
   border-radius: 1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem;
@@ -7,17 +7,19 @@
   gap: 1rem;
 }
 
-.user-profile-left{
+.user-profile-left {
   width: 40%;
+  height: 70%;
 }
 
-.user-profile-right{
+.user-profile-right {
   width: 50%;
 }
 
 .user-profile-header {
   display: flex;
   justify-content: center;
+  align-content: flex-start;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -76,4 +78,3 @@
   font-size: 16px;
   width: 100%;
 }
-
