@@ -95,7 +95,7 @@ const UserProfile = ({
             style={{
               border: "none",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              maxHeight: "34%",
+              maxHeight: "18rem",
               overflow: "auto",
             }}
           >
@@ -139,29 +139,36 @@ const UserProfile = ({
               border: "none",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
               marginTop: "1rem",
+              maxHeight: "17.7rem",
             }}
           >
             <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
               Progress Chart
             </h5>
-            <PieChart
-              colors={["#A7F3D0", "#D1D5DB", "#FCA5A5"]}
-              series={[
-                {
-                  data: [
-                    {
-                      id: 0,
-                      value: statusCounts.Completed,
-                      label: "Completed",
-                    },
-                    { id: 1, value: statusCounts.Ongoing, label: "Ongoing" },
-                    { id: 2, value: statusCounts.Late, label: "Late" },
-                  ],
-                },
-              ]}
-              width={200}
-              height={200}
-            />
+            {user.tasks.length > 0 ? (
+              <PieChart
+                colors={["#A7F3D0", "#D1D5DB", "#FCA5A5"]}
+                series={[
+                  {
+                    data: [
+                      {
+                        id: 0,
+                        value: statusCounts.Completed,
+                        label: "Completed",
+                      },
+                      { id: 1, value: statusCounts.Ongoing, label: "Ongoing" },
+                      { id: 2, value: statusCounts.Late, label: "Late" },
+                    ],
+                  },
+                ]}
+                width={200}
+                height={200}
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                You have not added any tasks
+              </p>
+            )}
           </Card>
         </div>
       </div>

@@ -26,41 +26,49 @@ const TaskList = () => {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {user.tasks.map((task, index) => (
-              <Table.Row
-                key={task.id || index}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <Table.Cell className="p-4">
-                  <Checkbox checked={task.status === "Completed"} readOnly />
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {task.taskName}
-                </Table.Cell>
-                <Table.Cell>{new Date(task.dateStarted).toLocaleDateString()}</Table.Cell>
-                <Table.Cell>{new Date(task.deadline).toLocaleDateString()}</Table.Cell>
-                <Table.Cell>
-                  <p className="text-sm">
-                    <Badge
-                      color={
-                        task.status === "Completed"
-                          ? "success"
-                          : task.status === "Late"
-                            ? "failure"
-                            : "gray"
-                      }
-                      className={`px-2 py-1 ${task.status.length > 10 ? "text-lg" : "text-sm"} `}
-                    >
-                      {task.status}
-                    </Badge>
-                  </p>
-                </Table.Cell>
-                <Table.Cell>
-                  <TaskListEditDetails task={task} />
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
+  {user.tasks.length > 0 ? (
+    user.tasks.map((task, index) => (
+      <Table.Row
+        key={task.id || index}
+        className="bg-white dark:border-gray-700 dark:bg-gray-800"
+      >
+        <Table.Cell className="p-4">
+          <Checkbox checked={task.status === "Completed"} readOnly />
+        </Table.Cell>
+        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+          {task.taskName}
+        </Table.Cell>
+        <Table.Cell>{new Date(task.dateStarted).toLocaleDateString()}</Table.Cell>
+        <Table.Cell>{new Date(task.deadline).toLocaleDateString()}</Table.Cell>
+        <Table.Cell>
+          <p className="text-sm">
+            <Badge
+              color={
+                task.status === "Completed"
+                  ? "success"
+                  : task.status === "Late"
+                    ? "failure"
+                    : "gray"
+              }
+              className={`px-2 py-1 ${task.status.length > 10 ? "text-lg" : "text-sm"} `}
+            >
+              {task.status}
+            </Badge>
+          </p>
+        </Table.Cell>
+        <Table.Cell>
+          <TaskListEditDetails task={task} />
+        </Table.Cell>
+      </Table.Row>
+    ))
+  ) : (
+    <Table.Row>
+      <Table.Cell colSpan={6} className="text-center">
+        You have not added any tasks
+      </Table.Cell>
+    </Table.Row>
+  )}
+</Table.Body>
         </Table>
       </div>
     </>

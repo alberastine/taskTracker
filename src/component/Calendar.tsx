@@ -1,104 +1,192 @@
+import { useEffect, useState } from "react";
+import { Calendar, Modal, Button, Input, Form, Badge } from "antd";
+import dayjs, { Dayjs } from "dayjs";
+import axios from "../api/axios";
 import WidgetWrapper from "./WidgetWrapper";
 
-import type { BadgeProps, CalendarProps } from "antd";
-import { Badge, Calendar } from "antd";
-import type { Dayjs } from "dayjs";
-import { Card } from "flowbite-react";
-
-import "../styles/components/Calendar.css";
-
-const getListData = (value: Dayjs) => {
-  let listData: { type: string; content: string }[] = []; // Specify the type of listData
-  switch (value.date()) {
-    case 8:
-      listData = [
-        { type: "warning", content: "This is warning event." },
-        { type: "success", content: "This is usual event." },
-      ];
-      break;
-    case 10:
-      listData = [
-        { type: "warning", content: "This is warning event." },
-        { type: "success", content: "This is usual event." },
-        { type: "error", content: "This is error event." },
-      ];
-      break;
-    case 15:
-      listData = [
-        { type: "warning", content: "This is warning event" },
-        { type: "success", content: "This is very long usual event......" },
-        { type: "error", content: "This is error event 1." },
-        { type: "error", content: "This is error event 2." },
-        { type: "error", content: "This is error event 3." },
-        { type: "error", content: "This is error event 4." },
-      ];
-      break;
-    default:
-  }
-  return listData || [];
-};
-
-const getMonthData = (value: Dayjs) => {
-  if (value.month() === 8) {
-    return 1394;
-  }
-};
+interface CalendarEvent {
+  _id: string;
+  title: string;
+  date: string;
+}
 
 const TaskCalendar = () => {
-  const monthCellRender = (value: Dayjs) => {
-    const num = getMonthData(value);
-    return num ? (
-      <div>
-        <section>{num}</section>
-        <span>Backlog number</span>
-      </div>
-    ) : null;
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const [newEventTitle, setNewEventTitle] = useState("");
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const [editingEventTitle, setEditingEventTitle] = useState<string>("");
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const res = await axios.get("/events");
+      setEvents(res.data);
+    };
+    fetchEvents();
+  }, []);
+
+  // Handle date click to open modal
+  const onDateClick = (date: Dayjs) => {
+    setSelectedDate(date);
+    setIsModalVisible(true);
+    setEditingEventId(null);
+    setEditingEventTitle("");
   };
 
-  const dateCellRender = (value: Dayjs) => {
-    const listData = getListData(value);
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleAddEvent = async () => {
+    if (!newEventTitle || !selectedDate) return;
+
+    const newEvent = {
+      title: newEventTitle,
+      date: selectedDate.format("YYYY-MM-DD"),
+    };
+
+    try {
+      const res = await axios.post("/events", newEvent);
+      setEvents((prevEvents) => [...prevEvents, res.data]);
+      setNewEventTitle("");
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error("Error adding event", error);
+    }
+  };
+
+  // Edit event
+  const handleEditEvent = async () => {
+    if (!editingEventTitle || !editingEventId) return;
+
+    const updatedEvent = {
+      title: editingEventTitle,
+    };
+
+    try {
+      const res = await axios.put(`/events/${editingEventId}`, updatedEvent);
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event._id === editingEventId
+            ? { ...event, title: res.data.title }
+            : event,
+        ),
+      );
+      setEditingEventId(null);
+      setEditingEventTitle("");
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error("Error updating event", error);
+    }
+  };
+
+  // Delete event
+  const handleDeleteEvent = async (eventId: string) => {
+    try {
+      await axios.delete(`/events/${eventId}`);
+
+      setEvents((prevEvents) =>
+        prevEvents.filter((event) => event._id !== eventId),
+      );
+    } catch (error) {
+      console.error("Error deleting event", error);
+    }
+  };
+
+  const getEventsForDate = (date: Dayjs) => {
+    return events.filter((event) => dayjs(event.date).isSame(date, "day"));
+  };
+
+  const cellRender = (date: Dayjs) => {
+    const dayEvents = getEventsForDate(date);
     return (
       <ul>
-        {listData.map((item) => (
-          <li key={item.content}>
-            <Badge
-              status={item.type as BadgeProps["status"]}
-              text={item.content}
-            />
+        {dayEvents.map((event, index) => (
+        <li key={event._id || `${event.title}-${index}-${date.format("YYYY-MM-DD")}`}>
+            <Badge status="success" text={event.title} />
           </li>
         ))}
       </ul>
     );
   };
 
-  const cellRender: CalendarProps<Dayjs>["cellRender"] = (current, info) => {
-    if (info.type === "date") return dateCellRender(current);
-    if (info.type === "month") return monthCellRender(current);
-    return info.originNode;
-  };
-
   return (
     <WidgetWrapper>
       <div className="calendar-main-container">
-        <div className="calenda-side-event">
-          <Card
-            className="max-w-sm"
-            style={{
-              border: "none",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Add Event
-            </h5>
-            <p className="font-normal text-gray-700 dark:text-gray-400">
-              Drag and drop to add event
-            </p>
-          </Card>
-        </div>
         <div className="calendar-container">
-          <Calendar cellRender={cellRender} />
+          <Calendar onSelect={onDateClick} cellRender={cellRender} />
         </div>
+
+        <Modal
+          title={`Events on ${selectedDate?.format("MMMM D, YYYY")}`}
+          open={isModalVisible}
+          onCancel={handleCancel}
+          footer={[
+            <Button key="back" onClick={handleCancel}>
+              Cancel
+            </Button>,
+            editingEventId ? (
+              <Button
+                type="primary"
+                onClick={handleEditEvent}
+                disabled={!editingEventTitle}
+              >
+                Edit Event
+              </Button>
+            ) : (
+              <Button
+                key="submit"
+                type="primary"
+                onClick={handleAddEvent}
+                disabled={!newEventTitle}
+                style={{ color: "black" }}
+              >
+                Add Event
+              </Button>
+            ),
+          ]}
+        >
+          <Form>
+            <Form.Item label="New Event Title">
+              <Input
+                value={editingEventId ? editingEventTitle : newEventTitle}
+                onChange={(e) =>
+                  editingEventId
+                    ? setEditingEventTitle(e.target.value)
+                    : setNewEventTitle(e.target.value)
+                }
+                placeholder="Enter event title"
+              />
+            </Form.Item>
+          </Form>
+          <h4>Existing Events:</h4>
+          <ul>
+            {getEventsForDate(selectedDate!).map((event, index) => (
+              <li key={event._id || `${event.title}-${index}`}>
+                <span
+                  onClick={() => {
+                    handleDeleteEvent(event._id);
+                  }}
+                >
+                  {event.title}
+                </span>
+                <Button
+                  type="link"
+                  danger
+                  onClick={() => {
+                    handleDeleteEvent(event._id);
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button type="primary" style={{ color: "black" }}>
+                  Edit Event
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </Modal>
       </div>
     </WidgetWrapper>
   );

@@ -24,6 +24,8 @@
     "flowbite-react": "^0.8.0",
     "mongoose": "^8.6.3",
     "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.53.0",
     "react-hot-toast": "^2.5.2",
