@@ -1,15 +1,10 @@
 .user-profile-container {
   display: flex;
-  border-radius: 1rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
   gap: 1rem;
 }
 
 .user-profile-left {
   width: 40%;
-  height: 70%;
 }
 
 .user-profile-right {
@@ -19,24 +14,8 @@
 .user-profile-header {
   display: flex;
   justify-content: center;
-  align-content: flex-start;
+  text-align: center;
   border-bottom: 1px solid #e0e0e0;
-}
-
-.user-profile-avatar {
-  width: 50%;
-}
-
-.user-profile-avatar p {
-  font-size: 1.5rem;
-}
-
-.user-profile-info {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  margin-top: 1rem;
-  width: 25%;
 }
 
 .user-profile-info h2 {

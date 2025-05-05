@@ -46,7 +46,7 @@ const UserProfile = ({
           }}
         >
           <div className="user-profile-header">
-            <div className="user-profile-avatar">
+            <div>
               <RxAvatar size={200} />
               <div className="user-profile-info">
                 <h2 className="dark:text-white">{user.username}</h2>
@@ -99,7 +99,7 @@ const UserProfile = ({
               overflow: "auto",
             }}
           >
-            <div className="mb-4 flex items-center justify-between ">
+            <div className="sticky top-0 z-10 flex items-center justify-between bg-white p-4 dark:bg-gray-800">
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Latest Tasks
               </h5>
@@ -111,20 +111,31 @@ const UserProfile = ({
               </button>
             </div>
             {user.tasks.map((task, index) => (
-              <div key={task.id || index} className="flow-root">
+              <div
+                key={task.id || index}
+                className={`flow-root rounded-lg ${
+                  task.status === "Completed"
+                    ? "bg-[#A7F3D0]/70"
+                    : task.status === "Ongoing"
+                      ? "bg-[#D1D5DB]/70"
+                      : task.status === "Late"
+                        ? "bg-[#FCA5A5]/70"
+                        : "bg-gray-50 dark:bg-gray-800"
+                }`}
+              >
                 <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                  <li className="py-3 sm:py-4">
+                  <li className="p-2 sm:py-2">
                     <div className="flex items-center space-x-4">
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="truncate text-sm font-medium text-gray-900">
                           {task.taskName}
                         </p>
-                        <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                        <p className="truncate text-sm text-gray-500">
                           {new Date(task.dateStarted).toLocaleDateString()} to{" "}
                           {new Date(task.deadline).toLocaleDateString()}
                         </p>
                       </div>
-                      <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                      <div className="inline-flex items-center text-base font-semibold text-gray-900">
                         {task.status}
                       </div>
                     </div>
