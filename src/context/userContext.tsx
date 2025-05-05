@@ -10,8 +10,10 @@ interface Task {
 }
 
 interface User {
+  _id: string;
   username: string;
   gmail: string;
+  password: string;
   tasks: Task[];
 }
 

@@ -2,10 +2,12 @@ import { RxAvatar } from "react-icons/rx";
 import WidgetWrapper from "./WidgetWrapper";
 import "../styles/components/UserProfile.css";
 import { Card } from "flowbite-react";
+import { Button, Form } from "antd";
 import { PieChart } from "@mui/x-charts/PieChart";
-
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../context/userContext";
+import { Input } from "antd";
+import axios from "../api/axios";
 
 type TaskStatus = "Completed" | "Ongoing" | "Late";
 
@@ -14,7 +16,23 @@ const UserProfile = ({
 }: {
   setActiveWidget: (key: number) => void;
 }) => {
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [allUsers, setAllUsers] = useState<{ _id: string; username: string }[]>([]);
+
   const { user } = useContext(UserContext);
+
+  const fetchUser = async () => {
+    try {
+      const res = await axios.get("/allUserInfo");
+      setAllUsers(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   if (!user) {
     return <div>User not found</div>;
@@ -36,59 +54,109 @@ const UserProfile = ({
     { ...initialStatusCounts },
   );
 
+  const totalTasks = user.tasks.length;
+
+  const onClickEditProfile = () => {
+    setEditingProfile(true);
+  };
+
+  const onClickSaveChanges = () => {
+    setEditingProfile(false);
+  };
+
+  const onClickCancelChanges = () => {
+    setEditingProfile(false);
+  };
+
   return (
     <WidgetWrapper>
-      <div className="user-profile-container">
-        <Card
-          className="user-profile-left"
-          style={{
-            border: "none",
-          }}
-        >
+      <div className="user-profile-container ">
+        <div className="user-profile-left dark:bg-gray-800">
           <div className="user-profile-header">
-            <div>
-              <RxAvatar size={200} />
-              <div className="user-profile-info">
-                <h2 className="dark:text-white">{user.username}</h2>
-                <p>{user.gmail}</p>
+            <div className="user-profile-header-info">
+              <div className="relative">
+                <RxAvatar size={120} className="rounded-full bg-gray-100" />
+                {editingProfile && (
+                  <label
+                    htmlFor="profile-upload"
+                    className="absolute bottom-2 right-2 cursor-pointer"
+                  >
+                    <div className="rounded-full bg-blue-500 p-1 text-white hover:bg-blue-600">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="size-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                    </div>
+                    <input
+                      id="profile-upload"
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                    />
+                  </label>
+                )}
               </div>
+              <div className="user-profile-info">
+                <div>
+                  <h2 className="dark:text-white">{user.username}</h2>
+                  <p>{user.gmail}</p>
+                </div>
+                <div className="mb-3">
+                  <span className="rounded bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                    Total tasks: {totalTasks}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="user-profile-info-buttons">
+              {editingProfile ? (
+                <Button
+                  color="danger"
+                  variant="outlined"
+                  onClick={onClickCancelChanges}
+                >
+                  Cancel
+                </Button>
+              ) : (
+                <Button onClick={onClickEditProfile}>Edit Profile</Button>
+              )}
             </div>
           </div>
           <div className="user-profile-body-container">
-            <div className="user-profile-body">
-              <div className="user-profile-body-label">
-                <p className="dark:text-white">Username</p>
-              </div>
-              <div className="user-profile-body-input-container">
-                <input className="user-profile-body-input" />
-              </div>
-            </div>
-            <div className="user-profile-body">
-              <div className="user-profile-body-label">
-                <p className="dark:text-white">Email</p>
-              </div>
-              <div className="user-profile-body-input-container">
-                <input className="user-profile-body-input" />
-              </div>
-            </div>
-            <div className="user-profile-body">
-              <div className="user-profile-body-label">
-                <p className="dark:text-white">Password</p>
-              </div>
-              <div className="user-profile-body-input-container">
-                <input className="user-profile-body-input" />
-              </div>
-            </div>
-            <div className="user-profile-body">
-              <div className="user-profile-body-label">
-                <p className="dark:text-white">Full name</p>
-              </div>
-              <div className="user-profile-body-input-container">
-                <input className="user-profile-body-input" />
-              </div>
-            </div>
+            {editingProfile && (
+              <>
+                <Form
+                  layout="horizontal"
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  style={{ maxWidth: 600 }}
+                  initialValues={{ remember: true }}
+                  onFinish={onClickSaveChanges}
+                  autoComplete="off"
+                >
+                  <Form.Item label="Username" name="username">
+                    <Input defaultValue={user.username} />
+                  </Form.Item>
+                  <Form.Item label="Email" name="email">
+                    <Input defaultValue={user.gmail} />
+                  </Form.Item>
+                  <Form.Item label="Password" name="password">
+                    <Input.Password defaultValue={user.password} />
+                  </Form.Item>
+
+                  <Button htmlType="submit" onClick={onClickEditProfile}>
+                    Save Changes
+                  </Button>
+                </Form>
+              </>
+            )}
           </div>
-        </Card>
+        </div>
         <div className="user-profile-right">
           <Card
             className="max-w-sm"
@@ -99,7 +167,7 @@ const UserProfile = ({
               overflow: "auto",
             }}
           >
-            <div className="sticky top-0 z-10 flex items-center justify-between bg-white p-4 dark:bg-gray-800">
+            <div className="sticky top-0 z-10 flex items-center justify-between bg-white py-4 dark:bg-gray-800">
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Latest Tasks
               </h5>
@@ -181,6 +249,26 @@ const UserProfile = ({
               </p>
             )}
           </Card>
+        </div>
+        <div className="collaborate-with">
+          <h5 className="py-4 text-xl font-bold leading-none text-gray-900 dark:text-white">
+            Collaborate with
+          </h5>
+          <div>
+            {allUsers
+              .filter((otherUser) => otherUser._id !== user._id)
+              .map((filteredUser: { _id: string; username: string }) => (
+                <div
+                  key={filteredUser._id}
+                  className="mb-2 flex items-start gap-2"
+                >
+                  <RxAvatar size={40} className="rounded-full bg-gray-100" />
+                  <span className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    {filteredUser.username}
+                  </span>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </WidgetWrapper>
