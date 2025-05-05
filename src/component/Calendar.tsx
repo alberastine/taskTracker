@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Calendar, Modal, Button, Input, Form, Badge } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import axios from "../api/axios";
 import WidgetWrapper from "./WidgetWrapper";
+
+import "../styles/components/Calendar.css";
 
 interface CalendarEvent {
   _id: string;
@@ -28,10 +31,10 @@ const TaskCalendar = () => {
 
   // Handle date click to open modal
   const onDateClick = (date: Dayjs) => {
+    setEditingEventTitle("");
     setSelectedDate(date);
     setIsModalVisible(true);
     setEditingEventId(null);
-    setEditingEventTitle("");
   };
 
   const handleCancel = () => {
@@ -39,6 +42,7 @@ const TaskCalendar = () => {
   };
 
   const handleAddEvent = async () => {
+    setEditingEventTitle("");
     if (!newEventTitle || !selectedDate) return;
 
     const newEvent = {
@@ -58,6 +62,7 @@ const TaskCalendar = () => {
 
   // Edit event
   const handleEditEvent = async () => {
+    setEditingEventTitle("");
     if (!editingEventTitle || !editingEventId) return;
 
     const updatedEvent = {
@@ -103,7 +108,12 @@ const TaskCalendar = () => {
     return (
       <ul>
         {dayEvents.map((event, index) => (
-        <li key={event._id || `${event.title}-${index}-${date.format("YYYY-MM-DD")}`}>
+          <li
+            key={
+              event._id ||
+              `${event.title}-${index}-${date.format("YYYY-MM-DD")}`
+            }
+          >
             <Badge status="success" text={event.title} />
           </li>
         ))}
@@ -113,7 +123,7 @@ const TaskCalendar = () => {
 
   return (
     <WidgetWrapper>
-      <div className="calendar-main-container">
+      <div>
         <div className="calendar-container">
           <Calendar onSelect={onDateClick} cellRender={cellRender} />
         </div>
@@ -122,33 +132,35 @@ const TaskCalendar = () => {
           title={`Events on ${selectedDate?.format("MMMM D, YYYY")}`}
           open={isModalVisible}
           onCancel={handleCancel}
+          width={400}
+          className="event-modal"
           footer={[
-            <Button key="back" onClick={handleCancel}>
+            <Button
+              key="back"
+              type="primary"
+              onClick={handleCancel}
+              className="cancel-btn"
+              color="danger"
+              variant="outlined"
+            >
               Cancel
             </Button>,
-            editingEventId ? (
-              <Button
-                type="primary"
-                onClick={handleEditEvent}
-                disabled={!editingEventTitle}
-              >
-                Edit Event
-              </Button>
-            ) : (
-              <Button
-                key="submit"
-                type="primary"
-                onClick={handleAddEvent}
-                disabled={!newEventTitle}
-                style={{ color: "black" }}
-              >
-                Add Event
-              </Button>
-            ),
+            <Button
+              key="submit"
+              type="primary"
+              onClick={editingEventId ? handleEditEvent : handleAddEvent}
+              disabled={editingEventId ? !editingEventTitle : !newEventTitle}
+              className="submit-btn"
+            >
+              {editingEventId ? "Update Event" : "Add Event"}
+            </Button>,
           ]}
         >
-          <Form>
-            <Form.Item label="New Event Title">
+          <Form layout="vertical">
+            <h4 className="existing-events-title">
+              {editingEventId ? "Edit Event Title" : "New Event Title"}
+            </h4>
+            <Form.Item className="event-form-item">
               <Input
                 value={editingEventId ? editingEventTitle : newEventTitle}
                 onChange={(e) =>
@@ -157,35 +169,43 @@ const TaskCalendar = () => {
                     : setNewEventTitle(e.target.value)
                 }
                 placeholder="Enter event title"
+                className="event-input"
               />
             </Form.Item>
           </Form>
-          <h4>Existing Events:</h4>
-          <ul>
-            {getEventsForDate(selectedDate!).map((event, index) => (
-              <li key={event._id || `${event.title}-${index}`}>
-                <span
-                  onClick={() => {
-                    handleDeleteEvent(event._id);
-                  }}
-                >
-                  {event.title}
-                </span>
-                <Button
-                  type="link"
-                  danger
-                  onClick={() => {
-                    handleDeleteEvent(event._id);
-                  }}
-                >
-                  Delete
-                </Button>
-                <Button type="primary" style={{ color: "black" }}>
-                  Edit Event
-                </Button>
-              </li>
-            ))}
-          </ul>
+
+          {getEventsForDate(selectedDate!).length > 0 && (
+            <>
+              <h4 className="existing-events-title">Existing Events:</h4>
+              <ul className="events-list">
+                {getEventsForDate(selectedDate!).map((event, index) => (
+                  <li
+                    key={event._id || `${event.title}-${index}`}
+                    className="event-item"
+                  >
+                    <span className="event-title">{event.title}</span>
+                    <div className="event-actions">
+                      <Button
+                        type="text"
+                        className="action-btn edit-btn"
+                        onClick={() => {
+                          setEditingEventId(event._id);
+                          setEditingEventTitle(event.title);
+                        }}
+                        icon={<EditOutlined />}
+                      />
+                      <Button
+                        type="text"
+                        className="action-btn delete-btn"
+                        onClick={() => handleDeleteEvent(event._id)}
+                        icon={<DeleteOutlined />}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </Modal>
       </div>
     </WidgetWrapper>
