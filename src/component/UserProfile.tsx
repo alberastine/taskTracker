@@ -38,18 +38,18 @@ const UserProfile = ({
   };
 
   const fetchUser = async () => {
-      try {
-        const res = await axios.get("/profile");
-        setUser(res.data.user);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    try {
+      const res = await axios.get("/profile");
+      setUser(res.data.user);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     fetchAllUser();
     fetchUser();
-  }, []);
+  });
 
   if (!user) {
     return <div>User not found</div>;
@@ -135,62 +135,91 @@ const UserProfile = ({
     <WidgetWrapper>
       <div className="user-profile-container ">
         <div className="user-profile-left dark:bg-gray-800">
-          <div className="user-profile-header">
-            <div className="user-profile-header-info">
-              <div className="relative border-gray-300 object-cover">
-                {user.profilePic ? (
-                  <img
-                    src={
-                      user.profilePic
-                        ? `http://localhost:5000${user.profilePic}`
-                        : "/default-avatar.png"
-                    }
-                    alt="Profile"
-                    className="size-[120px] rounded-full border-2 border-gray-300 object-cover p-1"
-                  />
-                ) : (
-                  <RxAvatar size={120} className="rounded-full bg-gray-100" />
-                )}
-                <div
-                  onClick={showModal}
-                  className="absolute bottom-2 right-2 cursor-pointer rounded-full bg-blue-500 p-1 text-white hover:bg-blue-300"
-                >
-                  <CameraOutlined style={{ fontSize: "20px" }} />
-                </div>
-              </div>
-              <div className="user-profile-info">
-                <div>
-                  <h2 className="dark:text-white">{user.username}</h2>
-                  <p>{user.gmail}</p>
-                </div>
-                <div className="mb-3">
-                  <span className="rounded bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                    Total tasks: {totalTasks}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="user-profile-info-buttons">
-              {editingProfile ? (
-                <Button
-                  color="danger"
-                  variant="outlined"
-                  onClick={onClickCancelChanges}
-                >
-                  Cancel
-                </Button>
+          <div className="user-profile-header-container">
+            <div className="cover-photo">
+              {user.profilePic ? (
+                <img
+                  src={
+                    user.profilePic
+                      ? `http://localhost:5000${user.profilePic}`
+                      : "/default-avatar.png"
+                  }
+                  alt="Profile"
+                  className="size-full rounded object-cover"
+                />
               ) : (
-                <Button onClick={onClickEditProfile}>Edit Profile</Button>
+                <RxAvatar size={120} className="rounded-full bg-gray-100" />
               )}
+              <div className="absolute bottom-20 right-2 flex cursor-pointer items-center justify-center rounded-full border-2 bg-blue-500 p-1 text-white hover:bg-blue-300">
+                <CameraOutlined style={{ fontSize: "15px" }} />
+                <p style={{ fontSize: "10px" }}>Edit cover photo</p>
+              </div>
             </div>
+            <div className="user-profile-header">
+              <div className="user-profile-header-info">
+                <div className="relative border-gray-300 object-cover">
+                  <div>
+                    {user.profilePic ? (
+                      <img
+                        src={
+                          user.profilePic
+                            ? `http://localhost:5000${user.profilePic}`
+                            : "/default-avatar.png"
+                        }
+                        alt="Profile"
+                        className="size-[120px] rounded-full border-4 border-white object-cover"
+                      />
+                    ) : (
+                      <RxAvatar
+                        size={120}
+                        className="rounded-full bg-gray-100"
+                      />
+                    )}
+                    <div
+                      onClick={showModal}
+                      className="absolute bottom-1 right-1 flex size-7 cursor-pointer items-center justify-center rounded-full border-2 bg-blue-500 p-1 text-white hover:bg-blue-300"
+                    >
+                      <CameraOutlined style={{ fontSize: "15px" }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="user-profile-info">
+                  <div>
+                    <h2 className="text-lg font-semibold dark:text-white">
+                      {user.username}
+                    </h2>
+                    <p>{user.gmail}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="user-profile-info-buttons">
+                {editingProfile ? (
+                  <Button
+                    color="danger"
+                    variant="outlined"
+                    onClick={onClickCancelChanges}
+                  >
+                    Cancel
+                  </Button>
+                ) : (
+                  <Button onClick={onClickEditProfile}>Edit Profile</Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-3 ml-3">
+            <span className="rounded bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              Total tasks: {totalTasks}
+            </span>
           </div>
           <div className="user-profile-body-container">
             {editingProfile && (
               <>
                 <Form
                   layout="horizontal"
-                  labelCol={{ span: 8 }}
+                  labelCol={{ span: 9 }}
                   wrapperCol={{ span: 16 }}
                   style={{ maxWidth: 600 }}
                   initialValues={{ remember: true }}
@@ -204,6 +233,9 @@ const UserProfile = ({
                     <Input defaultValue={user.gmail} />
                   </Form.Item>
                   <Form.Item label="Password" name="password">
+                    <Input.Password defaultValue={user.password} />
+                  </Form.Item>
+                  <Form.Item label="Confirm Password" name="confirmPassword">
                     <Input.Password defaultValue={user.password} />
                   </Form.Item>
 

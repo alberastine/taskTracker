@@ -8,17 +8,26 @@
   height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
 .user-profile-right {
   width: 40%;
 }
 
+.user-profile-header-container{
+  position: relative;
+  height: 14rem;
+}
+
 .user-profile-header {
   display: flex;
-  border-bottom: 1px solid #e0e0e0;
+  width: 93%;
+  padding-bottom: 1rem;
   justify-content: space-between;
+  position: absolute;
+  top: 5.5rem;
+  left: 1rem;
 }
 
 .user-profile-header-info {
@@ -28,14 +37,13 @@
 
 .user-profile-info {
   display: flex;
-  flex-direction: column;
   margin-top: 1rem;
-  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .user-profile-info-buttons {
   display: flex;
-  padding: 1.5rem;
+  align-items: flex-end;
 }
 
 .user-profile-info h2 {
@@ -94,4 +102,12 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
   padding: 1.5rem;
+}
+
+.cover-photo {
+  width: 100%;
+  height: 150px;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
 }
