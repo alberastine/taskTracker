@@ -2,12 +2,13 @@ import { RxAvatar } from "react-icons/rx";
 import WidgetWrapper from "./WidgetWrapper";
 import "../styles/components/UserProfile.css";
 import { Card } from "flowbite-react";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { UserContext } from "../context/userContext";
 import { Input } from "antd";
 import axios from "../api/axios";
+import { CameraOutlined } from "@ant-design/icons";
 
 type TaskStatus = "Completed" | "Ongoing" | "Late";
 
@@ -17,11 +18,17 @@ const UserProfile = ({
   setActiveWidget: (key: number) => void;
 }) => {
   const [editingProfile, setEditingProfile] = useState(false);
-  const [allUsers, setAllUsers] = useState<{ _id: string; username: string }[]>([]);
+  const [allUsers, setAllUsers] = useState<{ _id: string; username: string }[]>(
+    [],
+  );
+  const [file, setFile] = useState<File | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const fetchUser = async () => {
+  const fetchAllUser = async () => {
     try {
       const res = await axios.get("/allUserInfo");
       setAllUsers(res.data);
@@ -30,7 +37,17 @@ const UserProfile = ({
     }
   };
 
+  const fetchUser = async () => {
+      try {
+        const res = await axios.get("/profile");
+        setUser(res.data.user);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
   useEffect(() => {
+    fetchAllUser();
     fetchUser();
   }, []);
 
@@ -68,37 +85,78 @@ const UserProfile = ({
     setEditingProfile(false);
   };
 
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setFile(null);
+    setPreviewUrl(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      const fileUrl = URL.createObjectURL(selectedFile);
+      setPreviewUrl(fileUrl);
+    }
+  };
+
+  const handleSubmitProfile = async () => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("profilePic", file);
+
+    try {
+      await axios.post("/uploadProfilePicture", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      await fetchUser();
+
+      setIsModalOpen(false);
+      setFile(null);
+      setPreviewUrl(null);
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+    }
+  };
+
   return (
     <WidgetWrapper>
       <div className="user-profile-container ">
         <div className="user-profile-left dark:bg-gray-800">
           <div className="user-profile-header">
             <div className="user-profile-header-info">
-              <div className="relative">
-                <RxAvatar size={120} className="rounded-full bg-gray-100" />
-                {editingProfile && (
-                  <label
-                    htmlFor="profile-upload"
-                    className="absolute bottom-2 right-2 cursor-pointer"
-                  >
-                    <div className="rounded-full bg-blue-500 p-1 text-white hover:bg-blue-600">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="size-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                    </div>
-                    <input
-                      id="profile-upload"
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                    />
-                  </label>
+              <div className="relative border-gray-300 object-cover">
+                {user.profilePic ? (
+                  <img
+                    src={
+                      user.profilePic
+                        ? `http://localhost:5000${user.profilePic}`
+                        : "/default-avatar.png"
+                    }
+                    alt="Profile"
+                    className="size-[120px] rounded-full border-2 border-gray-300 object-cover p-1"
+                  />
+                ) : (
+                  <RxAvatar size={120} className="rounded-full bg-gray-100" />
                 )}
+                <div
+                  onClick={showModal}
+                  className="absolute bottom-2 right-2 cursor-pointer rounded-full bg-blue-500 p-1 text-white hover:bg-blue-300"
+                >
+                  <CameraOutlined style={{ fontSize: "20px" }} />
+                </div>
               </div>
               <div className="user-profile-info">
                 <div>
@@ -257,20 +315,84 @@ const UserProfile = ({
           <div>
             {allUsers
               .filter((otherUser) => otherUser._id !== user._id)
-              .map((filteredUser: { _id: string; username: string }) => (
-                <div
-                  key={filteredUser._id}
-                  className="mb-2 flex items-start gap-2"
-                >
-                  <RxAvatar size={40} className="rounded-full bg-gray-100" />
-                  <span className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    {filteredUser.username}
-                  </span>
-                </div>
-              ))}
+              .map(
+                (filteredUser: {
+                  _id: string;
+                  username: string;
+                  profilePic?: string;
+                }) => (
+                  <div
+                    key={filteredUser._id}
+                    className="mb-2 flex items-start gap-2"
+                  >
+                    {filteredUser.profilePic ? (
+                      <img
+                        src={
+                          filteredUser.profilePic
+                            ? `http://localhost:5000${filteredUser.profilePic}`
+                            : ""
+                        }
+                        className="size-10 rounded-full border-2 border-gray-300 object-cover"
+                      />
+                    ) : (
+                      <RxAvatar
+                        size={40}
+                        className="rounded-full bg-gray-100"
+                      />
+                    )}
+                    <span className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      {filteredUser.username}
+                    </span>
+                  </div>
+                ),
+              )}
           </div>
         </div>
       </div>
+      <Modal
+        title="Upload Profile Picture"
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            color="primary"
+            variant="outlined"
+            onClick={handleSubmitProfile}
+            disabled={!file}
+          >
+            Save
+          </Button>,
+        ]}
+      >
+        <div className="flex flex-col items-center gap-4">
+          {previewUrl && (
+            <div className="size-32 overflow-hidden rounded-full">
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="size-full object-cover"
+              />
+            </div>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            name="profilePic"
+            onChange={handleFileSelect}
+            className="block w-full text-sm text-gray-500
+              file:mr-4 file:rounded-full file:border-0
+              file:bg-blue-50 file:px-4
+              file:py-2 file:text-sm
+              file:font-semibold file:text-blue-700
+              hover:file:bg-blue-100"
+          />
+        </div>
+      </Modal>
     </WidgetWrapper>
   );
 };

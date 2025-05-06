@@ -23,6 +23,7 @@
 
 .user-profile-header-info {
   display: flex;
+  gap: 0.5rem;
 }
 
 .user-profile-info {

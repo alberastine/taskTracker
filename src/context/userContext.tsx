@@ -1,21 +1,6 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
 import axios from "../api/axios";
-
-interface Task {
-  id: string;
-  taskName: string;
-  dateStarted: string;
-  deadline: string;
-  status: string;
-}
-
-interface User {
-  _id: string;
-  username: string;
-  gmail: string;
-  password: string;
-  tasks: Task[];
-}
+import { User } from "../models/user";
 
 interface UserContextType {
   user: User | null;
