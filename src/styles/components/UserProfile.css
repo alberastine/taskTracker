@@ -15,7 +15,7 @@
   width: 40%;
 }
 
-.user-profile-header-container{
+.user-profile-header-container {
   position: relative;
   height: 14rem;
 }
@@ -95,7 +95,6 @@
   width: 100%;
 }
 
-
 .collaborate-with {
   width: 20%;
   height: 100%;
@@ -108,6 +107,17 @@
   width: 100%;
   height: 150px;
   border-radius: 1rem;
+  background-color: #00d5ff78;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   object-fit: cover;
+}
+
+.cover-photo-alt {
+  width: 100%;
+  height: 150px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 900;
 }

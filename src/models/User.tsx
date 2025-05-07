@@ -19,5 +19,6 @@ export interface Task {
     tasks: Task[];
     events: Event[];
     profilePic: string;
+    coverPic: string;
   }
   

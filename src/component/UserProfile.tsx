@@ -23,6 +23,7 @@ const UserProfile = ({
   );
   const [file, setFile] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenCoverpic, setIsModalOpenCoverpic] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { user, setUser } = useContext(UserContext);
@@ -89,7 +90,12 @@ const UserProfile = ({
     setIsModalOpen(true);
   };
 
+  const showModalCoverpic = () => {
+    setIsModalOpenCoverpic(true);
+  };
+
   const handleCancel = () => {
+    setIsModalOpenCoverpic(false);
     setIsModalOpen(false);
     setFile(null);
     setPreviewUrl(null);
@@ -131,26 +137,52 @@ const UserProfile = ({
     }
   };
 
+  const handleSubmitCoverPic = async () => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("coverPic", file);
+
+    try {
+      await axios.post("/uploadCoverPicture", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      await fetchUser();
+
+      setIsModalOpenCoverpic(false);
+      setFile(null);
+      setPreviewUrl(null);
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+    }
+  };
+
   return (
     <WidgetWrapper>
       <div className="user-profile-container ">
         <div className="user-profile-left dark:bg-gray-800">
           <div className="user-profile-header-container">
-            <div className="cover-photo">
-              {user.profilePic ? (
+            <div className="cover-photo relative">
+              {user.coverPic ? (
                 <img
                   src={
-                    user.profilePic
-                      ? `http://localhost:5000${user.profilePic}`
+                    user.coverPic
+                      ? `http://localhost:5000${user.coverPic}`
                       : "/default-avatar.png"
                   }
                   alt="Profile"
                   className="size-full rounded object-cover"
                 />
               ) : (
-                <RxAvatar size={120} className="rounded-full bg-gray-100" />
+                <div className="cover-photo-alt">No Cover Photo Uploaded</div>
               )}
-              <div className="absolute bottom-20 right-2 flex cursor-pointer items-center justify-center rounded-full border-2 bg-blue-500 p-1 text-white hover:bg-blue-300">
+              <div
+                onClick={showModalCoverpic}
+                className="absolute bottom-2 right-2 z-10 flex cursor-pointer items-center justify-center gap-1 rounded-full border-2 bg-blue-500 p-1 text-white hover:bg-blue-300"
+              >
                 <CameraOutlined style={{ fontSize: "15px" }} />
                 <p style={{ fontSize: "10px" }}>Edit cover photo</p>
               </div>
@@ -209,7 +241,7 @@ const UserProfile = ({
             </div>
           </div>
 
-          <div className="mb-3 ml-3">
+          <div className="mb-3">
             <span className="rounded bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
               Total tasks: {totalTasks}
             </span>
@@ -415,6 +447,50 @@ const UserProfile = ({
             type="file"
             accept="image/*"
             name="profilePic"
+            onChange={handleFileSelect}
+            className="block w-full text-sm text-gray-500
+              file:mr-4 file:rounded-full file:border-0
+              file:bg-blue-50 file:px-4
+              file:py-2 file:text-sm
+              file:font-semibold file:text-blue-700
+              hover:file:bg-blue-100"
+          />
+        </div>
+      </Modal>
+      <Modal
+        title="Upload Cover Picture"
+        open={isModalOpenCoverpic}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            color="primary"
+            variant="outlined"
+            onClick={handleSubmitCoverPic}
+            disabled={!file}
+          >
+            Save
+          </Button>,
+        ]}
+      >
+        <div className="flex flex-col items-center gap-4">
+          {previewUrl && (
+            <div className="size-32 w-full overflow-hidden ">
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="size-full object-cover"
+              />
+            </div>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            name="coverPic"
             onChange={handleFileSelect}
             className="block w-full text-sm text-gray-500
               file:mr-4 file:rounded-full file:border-0

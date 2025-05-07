@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
 import axios from "../api/axios";
-import { User } from "../models/user";
+import { User } from "../models/User";
 
 interface UserContextType {
   user: User | null;
