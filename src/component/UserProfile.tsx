@@ -255,7 +255,6 @@ const UserProfile = ({
                   wrapperCol={{ span: 16 }}
                   style={{ maxWidth: 600 }}
                   initialValues={{ remember: true }}
-                  onFinish={onClickSaveChanges}
                   autoComplete="off"
                 >
                   <Form.Item label="Username" name="username">
@@ -270,11 +269,12 @@ const UserProfile = ({
                   <Form.Item label="Confirm Password" name="confirmPassword">
                     <Input.Password defaultValue={user.password} />
                   </Form.Item>
-
-                  <Button htmlType="submit" onClick={onClickEditProfile}>
+                </Form>
+                <div className="flex justify-end">
+                  <Button htmlType="submit" onClick={onClickSaveChanges}>
                     Save Changes
                   </Button>
-                </Form>
+                </div>
               </>
             )}
           </div>
@@ -286,10 +286,9 @@ const UserProfile = ({
               border: "none",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
               maxHeight: "18rem",
-              overflow: "auto",
             }}
           >
-            <div className="sticky top-0 z-10 flex items-center justify-between bg-white py-4 dark:bg-gray-800">
+            <div className="sticky top-0 z-10 flex items-center justify-between bg-white dark:bg-gray-800">
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Latest Tasks
               </h5>
@@ -300,39 +299,46 @@ const UserProfile = ({
                 View all
               </button>
             </div>
-            {user.tasks.map((task, index) => (
-              <div
-                key={task.id || index}
-                className={`flow-root rounded-lg ${
-                  task.status === "Completed"
-                    ? "bg-[#A7F3D0]/70"
-                    : task.status === "Ongoing"
-                      ? "bg-[#D1D5DB]/70"
-                      : task.status === "Late"
-                        ? "bg-[#FCA5A5]/70"
-                        : "bg-gray-50 dark:bg-gray-800"
-                }`}
-              >
-                <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                  <li className="p-2 sm:py-2">
-                    <div className="flex items-center space-x-4">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900">
-                          {task.taskName}
-                        </p>
-                        <p className="truncate text-sm text-gray-500">
-                          {new Date(task.dateStarted).toLocaleDateString()} to{" "}
-                          {new Date(task.deadline).toLocaleDateString()}
-                        </p>
+            {[...user.tasks]
+              .sort(
+                (a, b) =>
+                  new Date(b.dateStarted).getTime() -
+                  new Date(a.dateStarted).getTime(),
+              )
+              .slice(0, 3)
+              .map((task, index) => (
+                <div
+                  key={task.id || index}
+                  className={`flow-root rounded-lg ${
+                    task.status === "Completed"
+                      ? "bg-[#A7F3D0]/70"
+                      : task.status === "Ongoing"
+                        ? "bg-[#D1D5DB]/70"
+                        : task.status === "Late"
+                          ? "bg-[#FCA5A5]/70"
+                          : "bg-gray-50 dark:bg-gray-800"
+                  }`}
+                >
+                  <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <li className="p-2 sm:py-2">
+                      <div className="flex items-center space-x-4">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-gray-900">
+                            {task.taskName}
+                          </p>
+                          <p className="truncate text-sm text-gray-500">
+                            {new Date(task.dateStarted).toLocaleDateString()} to{" "}
+                            {new Date(task.deadline).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="inline-flex items-center text-base font-semibold text-gray-900">
+                          {task.status}
+                        </div>
                       </div>
-                      <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                        {task.status}
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            ))}
+                    </li>
+                  </ul>
+                </div>
+              ))}
           </Card>
           <Card
             className="max-w-sm"

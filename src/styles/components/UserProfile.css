@@ -64,6 +64,7 @@
 
 .user-profile-body-container {
   display: flex;
+  flex-direction: column;
   padding: 1rem;
   gap: 1rem;
 }
@@ -85,6 +86,7 @@
 
 .user-profile-body-input-container {
   width: 50%;
+  
 }
 
 .user-profile-body-input {

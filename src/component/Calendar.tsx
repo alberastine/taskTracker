@@ -39,6 +39,7 @@ const TaskCalendar = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setNewEventTitle("");
   };
 
   const handleAddEvent = async () => {
