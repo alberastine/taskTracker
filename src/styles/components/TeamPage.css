@@ -1,0 +1,97 @@
+.teams-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.teams-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.create-team-btn {
+  padding: 0.5rem 1rem;
+  background-color: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.team-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.team-card:hover {
+  transform: translateY(-2px);
+}
+
+.team-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.members-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.member-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: #0066ff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  padding: 1rem;
+}
+
+.invite-member-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #f0f0f0;
+  border: 1px dashed #666;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+}

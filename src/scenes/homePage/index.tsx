@@ -2,6 +2,7 @@ import SibeBar from "../sideBar";
 import NavBar from "../navBar";
 import TaskList from "../../component/TaskList";
 import Calendar from "../../component/Calendar";
+import TeamPage from "../../component/Team";
 import UserProfile from "../../component/UserProfile";
 import { useState } from "react";
 
@@ -16,6 +17,8 @@ const HomePage = () => {
         return <TaskList />;
       case 2:
         return <Calendar />;
+      case 3:
+        return <TeamPage />;
       default:
         return null;
     }

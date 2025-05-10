@@ -1,5 +1,5 @@
 import { Sidebar } from "flowbite-react";
-import { HiChartPie, HiInbox, HiUser } from "react-icons/hi";
+import { HiChartPie, HiInbox, HiUser, HiOutlineUserGroup } from "react-icons/hi";
 import { FaRegCalendar } from "react-icons/fa";
 
 import "../../styles/scenes/sideBar.css";
@@ -28,6 +28,12 @@ const SibeBar = ({
               onClick={() => setActiveWidget(2)}
             >
               Calendar
+            </Sidebar.Item>
+            <Sidebar.Item
+              icon={HiOutlineUserGroup}
+              onClick={() => setActiveWidget(3)}
+            >
+              My Team
             </Sidebar.Item>
             <Sidebar.Collapse icon={HiInbox} label="Inbox">
               <Sidebar.Item>Deadlines</Sidebar.Item>
