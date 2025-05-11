@@ -21,7 +21,7 @@ const SibeBar = ({
               Account
             </Sidebar.Item>
             <Sidebar.Item icon={HiChartPie} onClick={() => setActiveWidget(1)}>
-              Dashboard
+              Task table
             </Sidebar.Item>
             <Sidebar.Item
               icon={FaRegCalendar}

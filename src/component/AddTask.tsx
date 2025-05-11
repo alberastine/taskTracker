@@ -61,8 +61,9 @@ const AddTask = () => {
     <div>
       <div>
         <Button
-          style={{ padding: "0", fontSize: "12px" }}
+          style={{ padding: "0", fontSize: "12px",  }}
           onClick={() => setOpen(true)}
+          className="add-task-button"
         >
           Add task
         </Button>

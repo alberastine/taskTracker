@@ -1,8 +1,8 @@
-import { RxAvatar } from "react-icons/rx";
 import WidgetWrapper from "./WidgetWrapper";
 import "../styles/components/UserProfile.css";
 import { Card } from "flowbite-react";
-import { Button, Form, Modal } from "antd";
+import { Form, Modal } from "antd";
+import { Button } from "flowbite-react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { useContext, useState, useEffect, useRef } from "react";
 import { UserContext } from "../context/userContext";
@@ -202,10 +202,9 @@ const UserProfile = ({
                         className="size-[120px] rounded-full border-4 border-white object-cover"
                       />
                     ) : (
-                      <RxAvatar
-                        size={120}
-                        className="rounded-full bg-gray-100"
-                      />
+                      <div className="user-profile-avatar">
+                        {user.username.charAt(0).toUpperCase()}
+                      </div>
                     )}
                     <div
                       onClick={showModal}
@@ -228,14 +227,18 @@ const UserProfile = ({
               <div className="user-profile-info-buttons">
                 {editingProfile ? (
                   <Button
-                    color="danger"
-                    variant="outlined"
                     onClick={onClickCancelChanges}
+                    className="button-no-focus"
                   >
                     Cancel
                   </Button>
                 ) : (
-                  <Button onClick={onClickEditProfile}>Edit Profile</Button>
+                  <Button
+                    onClick={onClickEditProfile}
+                    className="button-no-focus"
+                  >
+                    Edit Profile
+                  </Button>
                 )}
               </div>
             </div>
@@ -271,7 +274,10 @@ const UserProfile = ({
                   </Form.Item>
                 </Form>
                 <div className="flex justify-end">
-                  <Button htmlType="submit" onClick={onClickSaveChanges}>
+                  <Button
+                    onClick={onClickSaveChanges}
+                    className="button-no-focus"
+                  >
                     Save Changes
                   </Button>
                 </div>
@@ -395,22 +401,22 @@ const UserProfile = ({
                     key={filteredUser._id}
                     className="mb-2 flex items-start gap-2"
                   >
-                    {filteredUser.profilePic ? (
-                      <img
-                        src={
-                          filteredUser.profilePic
-                            ? `http://localhost:5000${filteredUser.profilePic}`
-                            : ""
-                        }
-                        className="size-10 rounded-full border-2 border-gray-300 object-cover"
-                      />
-                    ) : (
-                      <RxAvatar
-                        size={40}
-                        className="rounded-full bg-gray-100"
-                      />
-                    )}
-                    <span className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    <span className="collaborate-with-avatar flex size-10 items-center justify-center">
+                      {filteredUser.profilePic ? (
+                        <img
+                          src={
+                            filteredUser.profilePic
+                              ? `http://localhost:5000${filteredUser.profilePic}`
+                              : ""
+                          }
+                          className="size-10 rounded-full border-2 border-gray-300 object-cover"
+                          alt={`${filteredUser.username}'s avatar`}
+                        />
+                      ) : (
+                        filteredUser.username.charAt(0).toUpperCase()
+                      )}
+                    </span>
+                    <span className="mt-1 items-center justify-center text-sm text-gray-600 dark:text-gray-400">
                       {filteredUser.username}
                     </span>
                   </div>
@@ -424,18 +430,24 @@ const UserProfile = ({
         open={isModalOpen}
         onCancel={handleCancel}
         footer={[
-          <Button key="cancel" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            color="primary"
-            variant="outlined"
-            onClick={handleSubmitProfile}
-            disabled={!file}
-          >
-            Save
-          </Button>,
+          <div className="displayflex-flexend">
+            <Button
+              key="cancel"
+              className="button-no-focus"
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              key="submit"
+              className="button-no-focus"
+              onClick={handleSubmitProfile}
+              disabled={!file}
+            >
+              Save
+            </Button>
+          </div>,
         ]}
       >
         <div className="flex flex-col items-center gap-4">
@@ -468,18 +480,19 @@ const UserProfile = ({
         open={isModalOpenCoverpic}
         onCancel={handleCancel}
         footer={[
-          <Button key="cancel" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            color="primary"
-            variant="outlined"
-            onClick={handleSubmitCoverPic}
-            disabled={!file}
-          >
-            Save
-          </Button>,
+          <div className="displayflex-flexend">
+            <Button key="cancel" className="button-no-focus" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button
+              key="submit"
+              className="button-no-focus"
+              onClick={handleSubmitCoverPic}
+              disabled={!file}
+            >
+              Save
+            </Button>
+          </div>,
         ]}
       >
         <div className="flex flex-col items-center gap-4">

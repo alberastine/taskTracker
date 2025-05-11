@@ -1,10 +1,20 @@
-.add-task-label{
-    min-width: 120px;
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 5rem;
+.add-task-label {
+  min-width: 120px;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 5rem;
 }
 
-.add-task-label-input{
-    width: 210px;
+.add-task-label-input {
+  width: 210px;
+}
+
+.add-task-button {
+  border: none;
+  background: none;
+}
+
+.add-task-button:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }

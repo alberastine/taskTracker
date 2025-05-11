@@ -86,7 +86,6 @@
 
 .user-profile-body-input-container {
   width: 50%;
-  
 }
 
 .user-profile-body-input {
@@ -97,12 +96,37 @@
   width: 100%;
 }
 
+.user-profile-avatar {
+  width: 120px;
+  height: 120px;
+  background-color: #0066ff;
+  color: white;
+  border: 4px solid white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+
 .collaborate-with {
   width: 20%;
   height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
   padding: 1.5rem;
+}
+
+.collaborate-with-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: #0066ff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
 }
 
 .cover-photo {
@@ -122,4 +146,21 @@
   align-items: center;
   font-size: 1rem;
   font-weight: 900;
+}
+
+.button-no-focus {
+  border: none;
+  background: none;
+  padding: 1rem;
+}
+
+.button-no-focus:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.displayflex-flexend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
 }
