@@ -119,3 +119,24 @@
   cursor: pointer;
   margin-top: 1rem;
 }
+
+.team-options-dropdown {
+  position: relative;
+}
+
+.invite-modal-content {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.invite-user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.invite-user-item:last-child {
+  border-bottom: none;
+}
