@@ -10,6 +10,8 @@ import { Input } from "antd";
 import axios from "../api/axios";
 import { CameraOutlined } from "@ant-design/icons";
 
+import { userApi } from "../api/userApi";
+
 type TaskStatus = "Completed" | "Ongoing" | "Late";
 
 const UserProfile = ({
@@ -29,15 +31,6 @@ const UserProfile = ({
   const { user, setUser } = useContext(UserContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const fetchAllUser = async () => {
-    try {
-      const res = await axios.get("/allUserInfo");
-      setAllUsers(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const fetchUser = async () => {
     try {
       const res = await axios.get("/profile");
@@ -48,9 +41,20 @@ const UserProfile = ({
   };
 
   useEffect(() => {
-    fetchAllUser();
-    fetchUser();
-  });
+    const fetchData = async () => {
+      try {
+        const [usersResponse] = await Promise.all([
+          userApi.getAllUsers(),
+          fetchUser(),
+        ]);
+        setAllUsers(usersResponse);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   if (!user) {
     return <div>User not found</div>;
@@ -117,16 +121,8 @@ const UserProfile = ({
   const handleSubmitProfile = async () => {
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("profilePic", file);
-
     try {
-      await axios.post("/uploadProfilePicture", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      await userApi.updateProfilePicture(file);
       await fetchUser();
 
       setIsModalOpen(false);
@@ -140,16 +136,8 @@ const UserProfile = ({
   const handleSubmitCoverPic = async () => {
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("coverPic", file);
-
     try {
-      await axios.post("/uploadCoverPicture", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      await userApi.updateCoverPicture(file);
       await fetchUser();
 
       setIsModalOpenCoverpic(false);
