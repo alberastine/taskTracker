@@ -10,7 +10,7 @@ interface UpdateUserData {
 export const userApi = {
   getUserProfile: async () => {
     try {
-      const response = await axios.get('/profile');
+      const response = await axios.get("/profile");
       return response.data;
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -20,7 +20,7 @@ export const userApi = {
 
   getAllUsers: async () => {
     try {
-      const response = await axios.get('/allUserInfo');
+      const response = await axios.get("/allUserInfo");
       return response.data;
     } catch (error) {
       console.error("Error fetching all users:", error);
@@ -30,7 +30,9 @@ export const userApi = {
 
   updateUser: async (updateData: UpdateUserData) => {
     try {
-      const response = await axios.put('/updateUser', updateData);
+      const response = await axios.put("/updateUser", updateData, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       console.error("Error updating user:", error);
@@ -41,11 +43,11 @@ export const userApi = {
   updateProfilePicture: async (file: File) => {
     try {
       const formData = new FormData();
-      formData.append('profilePic', file);
+      formData.append("profilePic", file);
 
-      const response = await axios.post('/uploadProfilePicture', formData, {
+      const response = await axios.post("/uploadProfilePicture", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
       return response.data;
@@ -58,11 +60,11 @@ export const userApi = {
   updateCoverPicture: async (file: File) => {
     try {
       const formData = new FormData();
-      formData.append('coverPic', file);
+      formData.append("coverPic", file);
 
-      const response = await axios.post('/uploadCoverPicture', formData, {
+      const response = await axios.post("/uploadCoverPicture", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
       return response.data;
@@ -84,7 +86,7 @@ export const userApi = {
 
   loginUser: async (credentials: { gmail: string; password: string }) => {
     try {
-      const response = await axios.post('/login', credentials);
+      const response = await axios.post("/login", credentials);
       return response.data;
     } catch (error) {
       console.error("Error logging in:", error);
@@ -92,13 +94,13 @@ export const userApi = {
     }
   },
 
-  registerUser: async (userData: { 
-    username: string; 
-    gmail: string; 
-    password: string; 
+  registerUser: async (userData: {
+    username: string;
+    gmail: string;
+    password: string;
   }) => {
     try {
-      const response = await axios.post('/signup', userData);
+      const response = await axios.post("/signup", userData);
       return response.data;
     } catch (error) {
       console.error("Error registering user:", error);
@@ -108,11 +110,11 @@ export const userApi = {
 
   logoutUser: async () => {
     try {
-      const response = await axios.post('/logout');
+      const response = await axios.post("/logout");
       return response.data;
     } catch (error) {
       console.error("Error logging out:", error);
       throw error;
     }
-  }
+  },
 };

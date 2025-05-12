@@ -1,18 +1,26 @@
 import WidgetWrapper from "./WidgetWrapper";
 import "../styles/components/UserProfile.css";
 import { Card } from "flowbite-react";
-import { Form, Modal } from "antd";
-import { Button } from "flowbite-react";
+import { Form, Modal, Button, message } from "antd";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { useContext, useState, useEffect, useRef } from "react";
+import { useContext, useState, useEffect, useRef, useCallback } from "react";
 import { UserContext } from "../context/userContext";
 import { Input } from "antd";
 import axios from "../api/axios";
+
+import { AxiosError } from "axios";
 import { CameraOutlined } from "@ant-design/icons";
 
 import { userApi } from "../api/userApi";
 
 type TaskStatus = "Completed" | "Ongoing" | "Late";
+
+interface UpdateUserData {
+  username?: string;
+  gmail?: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
 
 const UserProfile = ({
   setActiveWidget,
@@ -31,14 +39,14 @@ const UserProfile = ({
   const { user, setUser } = useContext(UserContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const res = await axios.get("/profile");
       setUser(res.data.user);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [setUser]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +62,7 @@ const UserProfile = ({
     };
 
     fetchData();
-  }, []);
+  }, [fetchUser]);
 
   if (!user) {
     return <div>User not found</div>;
@@ -82,10 +90,6 @@ const UserProfile = ({
     setEditingProfile(true);
   };
 
-  const onClickSaveChanges = () => {
-    setEditingProfile(false);
-  };
-
   const onClickCancelChanges = () => {
     setEditingProfile(false);
   };
@@ -102,7 +106,6 @@ const UserProfile = ({
     setIsModalOpenCoverpic(false);
     setIsModalOpen(false);
     setFile(null);
-    setPreviewUrl(null);
     setPreviewUrl(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -145,6 +148,36 @@ const UserProfile = ({
       setPreviewUrl(null);
     } catch (error) {
       console.error("Error uploading profile picture:", error);
+    }
+  };
+
+  const handleUpdateUser = async (values: UpdateUserData) => {
+    try {
+      const updateData = {
+        username: values.username,
+        gmail: values.gmail,
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword || undefined,
+      };
+
+      await userApi.updateUser(updateData);
+      await fetchUser();
+      setEditingProfile(false);
+      message.success("Profile updated successfully");
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+
+      if (error.response) {
+        if (error.response.status === 401) {
+          message.error("Current password is incorrect");
+        } else if (error.response.data?.message) {
+          message.error(error.response.data.message);
+        } else {
+          message.error("Failed to update profile");
+        }
+      } else {
+        message.error("Network error or server is unreachable");
+      }
     }
   };
 
@@ -245,35 +278,58 @@ const UserProfile = ({
                   labelCol={{ span: 9 }}
                   wrapperCol={{ span: 16 }}
                   style={{ maxWidth: 600 }}
+                  autoComplete="off"
+                  onFinish={handleUpdateUser}
                   initialValues={{
                     username: user.username,
-                    email: user.gmail,
-                    password: user.password,
-                    confirmPassword: user.password,
+                    gmail: user.gmail,
                   }}
-                  autoComplete="off"
                 >
-                  <Form.Item label="Username" name="username">
-                    <Input />
-                  </Form.Item>
-                  <Form.Item label="Email" name="email">
-                    <Input />
-                  </Form.Item>
-                  <Form.Item label="Password" name="password">
-                    <Input.Password visibilityToggle={true} />
-                  </Form.Item>
-                  <Form.Item label="Confirm Password" name="confirmPassword">
-                    <Input.Password visibilityToggle={true} />
-                  </Form.Item>
-                </Form>
-                <div className="flex justify-end">
-                  <Button
-                    onClick={onClickSaveChanges}
-                    className="button-no-focus"
+                  <Form.Item
+                    label="Username"
+                    name="username"
+                    rules={[
+                      {
+                        min: 3,
+                        message: "Username must be at least 3 characters",
+                      },
+                    ]}
                   >
-                    Save Changes
-                  </Button>
-                </div>
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    label="Email"
+                    name="gmail"
+                    rules={[
+                      {
+                        type: "email",
+                        message: "Please enter a valid email!",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item label="Current Password" name="currentPassword">
+                    <Input.Password visibilityToggle={true} />
+                  </Form.Item>
+                  <Form.Item
+                    label="New Password"
+                    name="newPassword"
+                    rules={[
+                      {
+                        min: 6,
+                        message: "Password must be at least 6 characters",
+                      },
+                    ]}
+                  >
+                    <Input.Password visibilityToggle={true} />
+                  </Form.Item>
+                  <div className="flex justify-end">
+                    <Button className="button-no-focus" htmlType="submit">
+                      Save Changes
+                    </Button>
+                  </div>
+                </Form>
               </>
             )}
           </div>
