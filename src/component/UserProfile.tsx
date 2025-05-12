@@ -257,20 +257,25 @@ const UserProfile = ({
                   labelCol={{ span: 9 }}
                   wrapperCol={{ span: 16 }}
                   style={{ maxWidth: 600 }}
-                  initialValues={{ remember: true }}
+                  initialValues={{
+                    username: user.username,
+                    email: user.gmail,
+                    password: user.password,
+                    confirmPassword: user.password,
+                  }}
                   autoComplete="off"
                 >
                   <Form.Item label="Username" name="username">
-                    <Input defaultValue={user.username} />
+                    <Input />
                   </Form.Item>
                   <Form.Item label="Email" name="email">
-                    <Input defaultValue={user.gmail} />
+                    <Input />
                   </Form.Item>
                   <Form.Item label="Password" name="password">
-                    <Input.Password defaultValue={user.password} />
+                    <Input.Password visibilityToggle={true} />
                   </Form.Item>
                   <Form.Item label="Confirm Password" name="confirmPassword">
-                    <Input.Password defaultValue={user.password} />
+                    <Input.Password visibilityToggle={true} />
                   </Form.Item>
                 </Form>
                 <div className="flex justify-end">
@@ -385,7 +390,7 @@ const UserProfile = ({
           </Card>
         </div>
         <div className="collaborate-with">
-          <h5 className="py-4 text-xl font-bold leading-none text-gray-900 dark:text-white">
+          <h5 className="pb-4 text-xl font-bold leading-none text-gray-900 dark:text-white">
             Collaborate with
           </h5>
           <div>
@@ -481,7 +486,11 @@ const UserProfile = ({
         onCancel={handleCancel}
         footer={[
           <div className="displayflex-flexend">
-            <Button key="cancel" className="button-no-focus" onClick={handleCancel}>
+            <Button
+              key="cancel"
+              className="button-no-focus"
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
             <Button

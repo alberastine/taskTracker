@@ -5,13 +5,9 @@ import dayjs, { Dayjs } from "dayjs";
 import axios from "../api/axios";
 import WidgetWrapper from "./WidgetWrapper";
 
-import "../styles/components/Calendar.css";
+import { CalendarEvent } from "../models/User";
 
-interface CalendarEvent {
-  _id: string;
-  title: string;
-  date: string;
-}
+import "../styles/components/Calendar.css";
 
 const TaskCalendar = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -29,7 +25,6 @@ const TaskCalendar = () => {
     fetchEvents();
   }, []);
 
-  // Handle date click to open modal
   const onDateClick = (date: Dayjs) => {
     setEditingEventTitle("");
     setSelectedDate(date);
@@ -52,8 +47,11 @@ const TaskCalendar = () => {
     };
 
     try {
-      const res = await axios.post("/events", newEvent);
-      setEvents((prevEvents) => [...prevEvents, res.data]);
+      await axios.post("/events", newEvent);
+
+      const res = await axios.get("/events");
+      setEvents(res.data);
+
       setNewEventTitle("");
       setIsModalVisible(false);
     } catch (error) {
