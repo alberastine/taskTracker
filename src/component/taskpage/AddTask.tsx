@@ -133,7 +133,7 @@ const AddTask = () => {
               <Button
                 type="button"
                 onClick={() => setOpen(false)}
-                style={{ backgroundColor: "red", color: "white" }}
+                style={{ backgroundColor: "rgb(220, 20, 60)", color: "white" }}
               >
                 Cancel
               </Button>

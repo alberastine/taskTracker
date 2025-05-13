@@ -159,7 +159,10 @@ const UserProfile = ({
                   <Button
                     onClick={onClickCancelChanges}
                     className="button-no-focus"
-                    style={{ backgroundColor: "red", color: "white" }}
+                    style={{
+                      backgroundColor: "rgb(220, 20, 60)",
+                      color: "white",
+                    }}
                   >
                     Cancel
                   </Button>

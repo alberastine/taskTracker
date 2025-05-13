@@ -1,15 +1,63 @@
 import { Badge, Checkbox, Table } from "flowbite-react";
+import { DeleteOutlined } from "@ant-design/icons";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../context/userContext";
+import { Task } from "../../models/User";
+import { taskApi } from "../../api/taskApi";
+import { Button, message, Modal } from "antd";
+
 import AddTask from "./AddTask";
 import TaskListEditDetails from "../taskpage/TaskListEditDetails";
-
-import { useContext } from "react";
-import { UserContext } from "../../context/userContext";
+import axios from "../../api/axios";
 
 const TaskList = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+
   const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get("/getTasks");
+        setTasks(response.data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+    fetchTasks();
+  }, [tasks]);
+
   if (!user) {
     return <div>Loading...</div>;
   }
+
+  const handleDeleteTask = async () => {
+    if (!selectedTaskId) return;
+    try {
+      await taskApi.deleteTask(selectedTaskId);
+      setTasks((prevTasks) =>
+        prevTasks.filter((task) => task._id !== selectedTaskId),
+      );
+      user.tasks = user.tasks.filter((task) => task._id !== selectedTaskId);
+      message.success("Task deleted successfully");
+      setShowModal(false);
+      setSelectedTaskId(null);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      message.error("Failed to delete task");
+    }
+  };
+
+  const isModalOpen = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setShowModal(true);
+  };
+  const handleCancel = () => {
+    setShowModal(false);
+  };
 
   return (
     <>
@@ -26,10 +74,10 @@ const TaskList = () => {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {user.tasks.length > 0 ? (
-              user.tasks.map((task, index) => (
+            {tasks.length > 0 ? (
+              tasks.map((task, index) => (
                 <Table.Row
-                  key={task.id || index}
+                  key={task._id || index}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"
                 >
                   <Table.Cell className="p-4">
@@ -60,8 +108,14 @@ const TaskList = () => {
                       </Badge>
                     </p>
                   </Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="flex items-center gap-6">
                     <TaskListEditDetails task={task} />
+                    <DeleteOutlined
+                      onClick={() => {
+                        isModalOpen(task._id);
+                      }}
+                      style={{ fontSize: "20px", cursor: "pointer" }}
+                    />
                   </Table.Cell>
                 </Table.Row>
               ))
@@ -75,6 +129,36 @@ const TaskList = () => {
           </Table.Body>
         </Table>
       </div>
+      <Modal
+        title="Are you sure you want to delete this task?"
+        open={showModal}
+        onCancel={() => setShowModal(false)}
+        footer={[
+          <div className="displayflex-flexend">
+            <Button
+              key="cancel"
+              className="button-no-focus"
+              onClick={handleCancel}
+              style={{ backgroundColor: "rgb(220, 20, 60)", color: "white" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              key="submit"
+              className="button-no-focus"
+              onClick={handleDeleteTask}
+              style={{
+                backgroundColor: "rgb(14 116 144)",
+                color: "white",
+              }}
+            >
+              Yes
+            </Button>
+          </div>,
+        ]}
+      >
+        <p>This action cannot be undone. Do you want to proceed?</p>
+      </Modal>
     </>
   );
 };

@@ -1,8 +1,10 @@
 import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
 
+import "../../styles/components/EditTask.css";
+
 interface TaskData {
-  id: string;
+  _id: string;
   taskName: string;
   dateStarted: string;
   deadline: string;
