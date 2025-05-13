@@ -1,17 +1,17 @@
-
-import { Form, Modal, Button, message } from "antd";
-import { useContext, useState, useEffect, useRef, useCallback } from "react";
+import { Form, Button, message } from "antd";
+import { useContext, useState, useEffect, useCallback } from "react";
 import { UserContext } from "../../context/userContext";
 import { Input } from "antd";
-import axios from "../../api/axios";
-
 import { AxiosError } from "axios";
-import { CameraOutlined } from "@ant-design/icons";
 import { userApi } from "../../api/userApi";
 
 import ProgressChart from "./ProgressChart";
 import LatestTasks from "./LatestTasks";
 import WidgetWrapper from "../WidgetWrapper";
+import EditCoverPhoto from "./EditCoverPhoto";
+import EditProfilePhoto from "./EditProfilePhoto";
+import axios from "../../api/axios";
+
 import "../../styles/components/UserProfile.css";
 interface UpdateUserData {
   username?: string;
@@ -29,13 +29,8 @@ const UserProfile = ({
   const [allUsers, setAllUsers] = useState<{ _id: string; username: string }[]>(
     [],
   );
-  const [file, setFile] = useState<File | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpenCoverpic, setIsModalOpenCoverpic] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { user, setUser } = useContext(UserContext);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchUser = useCallback(async () => {
     try {
@@ -74,63 +69,6 @@ const UserProfile = ({
 
   const onClickCancelChanges = () => {
     setEditingProfile(false);
-  };
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const showModalCoverpic = () => {
-    setIsModalOpenCoverpic(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpenCoverpic(false);
-    setIsModalOpen(false);
-    setFile(null);
-    setPreviewUrl(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      const fileUrl = URL.createObjectURL(selectedFile);
-      setPreviewUrl(fileUrl);
-    }
-  };
-
-  const handleSubmitProfile = async () => {
-    if (!file) return;
-
-    try {
-      await userApi.updateProfilePicture(file);
-      await fetchUser();
-
-      setIsModalOpen(false);
-      setFile(null);
-      setPreviewUrl(null);
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-    }
-  };
-
-  const handleSubmitCoverPic = async () => {
-    if (!file) return;
-
-    try {
-      await userApi.updateCoverPicture(file);
-      await fetchUser();
-
-      setIsModalOpenCoverpic(false);
-      setFile(null);
-      setPreviewUrl(null);
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-    }
   };
 
   const handleUpdateUser = async (values: UpdateUserData) => {
@@ -182,13 +120,7 @@ const UserProfile = ({
               ) : (
                 <div className="cover-photo-alt">No Cover Photo Uploaded</div>
               )}
-              <div
-                onClick={showModalCoverpic}
-                className="absolute bottom-2 right-2 z-10 flex cursor-pointer items-center justify-center gap-1 rounded-full border-2 bg-blue-500 p-1 text-white hover:bg-blue-300"
-              >
-                <CameraOutlined style={{ fontSize: "15px" }} />
-                <p style={{ fontSize: "10px" }}>Edit cover photo</p>
-              </div>
+              <EditCoverPhoto />
             </div>
             <div className="user-profile-header">
               <div className="user-profile-header-info">
@@ -209,12 +141,7 @@ const UserProfile = ({
                         {user.username.charAt(0).toUpperCase()}
                       </div>
                     )}
-                    <div
-                      onClick={showModal}
-                      className="absolute bottom-1 right-1 flex size-7 cursor-pointer items-center justify-center rounded-full border-2 bg-blue-500 p-1 text-white hover:bg-blue-300"
-                    >
-                      <CameraOutlined style={{ fontSize: "15px" }} />
-                    </div>
+                    <EditProfilePhoto />
                   </div>
                 </div>
                 <div className="user-profile-info">
@@ -373,105 +300,6 @@ const UserProfile = ({
           </div>
         </div>
       </div>
-      <Modal
-        title="Upload Profile Picture"
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={[
-          <div className="displayflex-flexend">
-            <Button
-              key="cancel"
-              className="button-no-focus"
-              onClick={handleCancel}
-            >
-              Cancel
-            </Button>
-
-            <Button
-              key="submit"
-              className="button-no-focus"
-              onClick={handleSubmitProfile}
-              disabled={!file}
-            >
-              Save
-            </Button>
-          </div>,
-        ]}
-      >
-        <div className="flex flex-col items-center gap-4">
-          {previewUrl && (
-            <div className="size-32 overflow-hidden rounded-full">
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className="size-full object-cover"
-              />
-            </div>
-          )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            name="profilePic"
-            onChange={handleFileSelect}
-            className="block w-full text-sm text-gray-500
-              file:mr-4 file:rounded-full file:border-0
-              file:bg-blue-50 file:px-4
-              file:py-2 file:text-sm
-              file:font-semibold file:text-blue-700
-              hover:file:bg-blue-100"
-          />
-        </div>
-      </Modal>
-      <Modal
-        title="Upload Cover Picture"
-        open={isModalOpenCoverpic}
-        onCancel={handleCancel}
-        footer={[
-          <div className="displayflex-flexend">
-            <Button
-              key="cancel"
-              className="button-no-focus"
-              onClick={handleCancel}
-            >
-              Cancel
-            </Button>
-            <Button
-              key="submit"
-              className="button-no-focus"
-              onClick={handleSubmitCoverPic}
-              disabled={!file}
-            >
-              Save
-            </Button>
-          </div>,
-        ]}
-      >
-        <div className="flex flex-col items-center gap-4">
-          {previewUrl && (
-            <div className="size-32 w-full overflow-hidden ">
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className="size-full object-cover"
-              />
-            </div>
-          )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            name="coverPic"
-            onChange={handleFileSelect}
-            className="block w-full text-sm text-gray-500
-              file:mr-4 file:rounded-full file:border-0
-              file:bg-blue-50 file:px-4
-              file:py-2 file:text-sm
-              file:font-semibold file:text-blue-700
-              hover:file:bg-blue-100"
-          />
-        </div>
-      </Modal>
     </WidgetWrapper>
   );
 };
