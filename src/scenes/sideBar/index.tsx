@@ -18,7 +18,7 @@ const SibeBar = ({
           </span>
           <Sidebar.ItemGroup>
             <Sidebar.Item icon={HiUser} onClick={() => setActiveWidget(0)}>
-              Account
+              Profile
             </Sidebar.Item>
             <Sidebar.Item icon={HiChartPie} onClick={() => setActiveWidget(1)}>
               Task table

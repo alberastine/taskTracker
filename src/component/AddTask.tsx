@@ -1,4 +1,5 @@
 import { Button, Modal, TextInput, Datepicker, Select } from "flowbite-react";
+import { message } from "antd";
 import { useState } from "react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
@@ -51,6 +52,7 @@ const AddTask = () => {
         deadline: "",
         status: "Ongoing",
       });
+      message.success("Task added successfully");
     } catch (err) {
       console.error("Error adding task:", err);
       setError("Failed to add task. Please try again.");
@@ -61,7 +63,7 @@ const AddTask = () => {
     <div>
       <div>
         <Button
-          style={{ padding: "0", fontSize: "12px",  }}
+          style={{ padding: "0", fontSize: "12px" }}
           onClick={() => setOpen(true)}
           className="add-task-button"
         >
@@ -128,7 +130,11 @@ const AddTask = () => {
             </div>
 
             <Modal.Footer className="mt-4 flex justify-end">
-              <Button type="button" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                onClick={() => setOpen(false)}
+                style={{ backgroundColor: "red", color: "white" }}
+              >
                 Cancel
               </Button>
               <Button type="submit">Save</Button>
