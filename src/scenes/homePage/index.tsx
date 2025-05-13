@@ -1,6 +1,6 @@
 import SibeBar from "../sideBar";
 import NavBar from "../navBar";
-import TaskList from "../../component/TaskList";
+import TaskList from "../../component/taskpage/TaskList";
 import Calendar from "../../component/Calendar";
 import TeamPage from "../../component/Team";
 import UserProfile from "../../component/userpage/UserProfile";
