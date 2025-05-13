@@ -1,9 +1,14 @@
-import { Button, Modal, TextInput, Datepicker, Select } from "flowbite-react";
+import {
+  Button,
+  Modal,
+  TextInput,
+  Datepicker,
+  Select,
+  Spinner,
+} from "flowbite-react";
 import { message } from "antd";
-import { useState } from "react";
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { UserContext } from "../../context/userContext";
-
 import axios from "../../api/axios";
 import "../../styles/components/AddTask.css";
 
@@ -11,6 +16,8 @@ const AddTask = () => {
   const { fetchUser } = useContext(UserContext);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const [data, setData] = useState<{
     taskName: string;
@@ -39,11 +46,19 @@ const AddTask = () => {
       status,
     };
 
+    setLoading(true);
+    setShowSpinner(true);
+
+    const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+
     try {
+      await delay;
+
       await axios.post("/addTask", payload);
 
       await fetchUser();
 
+      message.success("Task added successfully");
       setOpen(false);
       setError("");
       setData({
@@ -52,10 +67,12 @@ const AddTask = () => {
         deadline: "",
         status: "Ongoing",
       });
-      message.success("Task added successfully");
     } catch (err) {
       console.error("Error adding task:", err);
       setError("Failed to add task. Please try again.");
+    } finally {
+      setLoading(false);
+      setShowSpinner(false);
     }
   };
 
@@ -137,7 +154,14 @@ const AddTask = () => {
               >
                 Cancel
               </Button>
-              <Button type="submit">Save</Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                Save
+                {showSpinner && <Spinner size="sm" className="ml-2" />}
+              </Button>
             </Modal.Footer>
           </form>
         </Modal.Body>

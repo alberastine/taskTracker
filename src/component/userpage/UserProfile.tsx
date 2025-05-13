@@ -2,6 +2,7 @@ import { Form, Button, message } from "antd";
 import { useContext, useState, useEffect, useCallback } from "react";
 import { UserContext } from "../../context/userContext";
 import { Input } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { AxiosError } from "axios";
 import { userApi } from "../../api/userApi";
 
@@ -13,6 +14,7 @@ import EditProfilePhoto from "./EditProfilePhoto";
 import axios from "../../api/axios";
 
 import "../../styles/components/UserProfile.css";
+
 interface UpdateUserData {
   username?: string;
   gmail?: string;
@@ -26,6 +28,8 @@ const UserProfile = ({
   setActiveWidget: (key: number) => void;
 }) => {
   const [editingProfile, setEditingProfile] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const [allUsers, setAllUsers] = useState<{ _id: string; username: string }[]>(
     [],
   );
@@ -80,7 +84,14 @@ const UserProfile = ({
         newPassword: values.newPassword || undefined,
       };
 
+      setLoading(true);
+      setShowSpinner(true);
+
+      const delay = new Promise((resolve) => setTimeout(resolve, 1500));
+      await delay;
+
       await userApi.updateUser(updateData);
+
       await fetchUser();
       setEditingProfile(false);
       message.success("Profile updated successfully");
@@ -98,6 +109,9 @@ const UserProfile = ({
       } else {
         message.error("Network error or server is unreachable");
       }
+    } finally {
+      setLoading(false);
+      setShowSpinner(false);
     }
   };
 
@@ -249,8 +263,10 @@ const UserProfile = ({
                         backgroundColor: "rgb(14 116 144)",
                         color: "white",
                       }}
+                      disabled={loading}
                     >
                       Save Changes
+                      {showSpinner && <LoadingOutlined />}
                     </Button>
                   </div>
                 </Form>

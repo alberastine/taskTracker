@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Calendar, Modal, Button, Input, Form, Badge } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import axios from "../api/axios";
 import WidgetWrapper from "./WidgetWrapper";
@@ -12,6 +16,8 @@ import "../styles/components/Calendar.css";
 const TaskCalendar = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [newEventTitle, setNewEventTitle] = useState("");
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
@@ -46,6 +52,12 @@ const TaskCalendar = () => {
       date: selectedDate.format("YYYY-MM-DD"),
     };
 
+    setLoading(true);
+    setShowSpinner(true);
+
+    const delay = new Promise((resolve) => setTimeout(resolve, 1500));
+    await delay;
+
     try {
       await axios.post("/events", newEvent);
 
@@ -56,6 +68,9 @@ const TaskCalendar = () => {
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error adding event", error);
+    } finally {
+      setLoading(false);
+      setShowSpinner(false);
     }
   };
 
@@ -67,6 +82,12 @@ const TaskCalendar = () => {
     const updatedEvent = {
       title: editingEventTitle,
     };
+
+    setLoading(true);
+    setShowSpinner(true);
+
+    const delay = new Promise((resolve) => setTimeout(resolve, 1500));
+    await delay;
 
     try {
       const res = await axios.put(`/events/${editingEventId}`, updatedEvent);
@@ -82,6 +103,9 @@ const TaskCalendar = () => {
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error updating event", error);
+    } finally {
+      setLoading(false);
+      setShowSpinner(false);
     }
   };
 
@@ -141,6 +165,10 @@ const TaskCalendar = () => {
               className="cancel-btn"
               color="danger"
               variant="outlined"
+              style={{
+                backgroundColor: "rgb(220, 20, 60)",
+                color: "white",
+              }}
             >
               Cancel
             </Button>,
@@ -148,10 +176,19 @@ const TaskCalendar = () => {
               key="submit"
               type="primary"
               onClick={editingEventId ? handleEditEvent : handleAddEvent}
-              disabled={editingEventId ? !editingEventTitle : !newEventTitle}
+              disabled={
+                editingEventId
+                  ? !editingEventTitle || loading
+                  : !newEventTitle || loading
+              }
               className="submit-btn"
+              style={{
+                backgroundColor: "rgb(14 116 144)",
+                color: "white",
+              }}
             >
               {editingEventId ? "Update Event" : "Add Event"}
+              {showSpinner && <LoadingOutlined />}
             </Button>,
           ]}
         >

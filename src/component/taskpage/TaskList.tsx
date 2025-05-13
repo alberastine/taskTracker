@@ -5,6 +5,7 @@ import { UserContext } from "../../context/userContext";
 import { Task } from "../../models/User";
 import { taskApi } from "../../api/taskApi";
 import { Button, message, Modal } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import AddTask from "./AddTask";
 import TaskListEditDetails from "../taskpage/TaskListEditDetails";
@@ -12,7 +13,8 @@ import axios from "../../api/axios";
 
 const TaskList = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-
+  const [loading, setLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
@@ -36,18 +38,34 @@ const TaskList = () => {
 
   const handleDeleteTask = async () => {
     if (!selectedTaskId) return;
+
     try {
+      setLoading(true);
+      setShowSpinner(true);
+
+      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+
+      await delay;
+
       await taskApi.deleteTask(selectedTaskId);
+
       setTasks((prevTasks) =>
         prevTasks.filter((task) => task._id !== selectedTaskId),
       );
+
       user.tasks = user.tasks.filter((task) => task._id !== selectedTaskId);
+
       message.success("Task deleted successfully");
+
       setShowModal(false);
       setSelectedTaskId(null);
     } catch (error) {
       console.error("Error deleting task:", error);
       message.error("Failed to delete task");
+    } finally {
+      // Hide spinner and loading state
+      setLoading(false);
+      setShowSpinner(false);
     }
   };
 
@@ -147,12 +165,13 @@ const TaskList = () => {
               key="submit"
               className="button-no-focus"
               onClick={handleDeleteTask}
+              disabled={loading}
               style={{
                 backgroundColor: "rgb(14 116 144)",
                 color: "white",
               }}
             >
-              Yes
+              Yes {showSpinner && <LoadingOutlined />}
             </Button>
           </div>,
         ]}
