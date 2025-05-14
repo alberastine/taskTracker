@@ -88,7 +88,7 @@ const Notification = () => {
                     border: "none",
                   }}
                 >
-                  Accept{" "}
+                  Accept
                   {loadingAction?.teamId === team._id &&
                     loadingAction?.action === "accept" && (
                       <Spinner size="sm" className="ml-2" />
@@ -103,7 +103,7 @@ const Notification = () => {
                     border: "none",
                   }}
                 >
-                  Decline{" "}
+                  Decline
                   {loadingAction?.teamId === team._id &&
                     loadingAction?.action === "decline" && (
                       <Spinner size="sm" className="ml-2" />

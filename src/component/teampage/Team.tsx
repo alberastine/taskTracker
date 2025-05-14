@@ -1,31 +1,23 @@
 import { useEffect, useState, useContext, useCallback } from "react";
-import { getUserTeams, sendTeamInvitation } from "../../context/teamContext";
-import { Team } from "../../models/Team";
-import axios from "../../api/axios";
+import { getUserTeams } from "../../context/teamContext";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { Modal, Button } from "flowbite-react";
+import { Button } from "flowbite-react";
 import { UserContext } from "../../context/userContext";
-import "../../styles/components/TeamPage.css";
+import { Team } from "../../models/Team";
+import { User } from "../../models/User";
+
 import WidgetWrapper from "../WidgetWrapper";
+import InviteUser from "./InviteUser";
+import axios from "../../api/axios";
 
-// Types
-interface User {
-  _id: string;
-  username: string;
-  profilePic?: string;
-}
+import "../../styles/components/TeamPage.css";
 
-interface TeamPageProps {}
-
-const TeamPage: React.FC<TeamPageProps> = () => {
+const TeamPage = () => {
   // State management
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [inviteError, setInviteError] = useState<string | null>(null);
 
   const { user: currentUser } = useContext(UserContext);
 
@@ -57,107 +49,7 @@ const TeamPage: React.FC<TeamPageProps> = () => {
     );
   }, [fetchAllUsers, fetchTeams]);
 
-  // Event handlers
-  const handleInviteMember = async (teamId: string, userId: string) => {
-    try {
-      await sendTeamInvitation(teamId, userId);
-      setIsInviteModalOpen(false);
-      setInviteError(null);
-      await fetchTeams();
-    } catch (error) {
-      setInviteError("Failed to send invitation");
-    }
-  };
-
-  const handleTeamRequest = async (
-    action: "accept" | "reject",
-    teamId: string,
-    userId: string,
-  ) => {
-    try {
-      await axios.post(`/teams/${teamId}/${action}-request`, { userId });
-      await fetchTeams();
-    } catch (error) {
-      console.error(`Failed to ${action} request:`, error);
-      setError(`Failed to ${action} team request`);
-    }
-  };
-
-  const handleModalClose = () => {
-    setIsInviteModalOpen(false);
-    setSelectedTeam(null);
-    setInviteError(null);
-  };
-
-  // Render helpers
-  const renderAvatar = (user: User) =>
-    user.profilePic ? (
-      <img
-        src={`http://localhost:5000${user.profilePic}`}
-        alt={`${user.username}'s avatar`}
-        className="size-8 rounded-full"
-      />
-    ) : (
-      <div className="flex size-8 items-center justify-center rounded-full bg-gray-200">
-        {user.username.charAt(0).toUpperCase()}
-      </div>
-    );
-
-  const renderTeamMemberActions = (user: User, teamData: Team | undefined) => {
-    const isTeamLeader = teamData?.leader_id === currentUser?._id;
-    const hasJoinRequest = teamData?.join_requests?.some(
-      (request) => request.user_id === user._id,
-    );
-    const isInvited = teamData?.invited_users?.some(
-      (invitedUser) => invitedUser.user_id === user._id,
-    );
-
-    if (isInvited) return <span className="text-gray-500">Invited</span>;
-
-    if (isTeamLeader && hasJoinRequest) {
-      return (
-        <>
-          <Button
-            size="sm"
-            onClick={() =>
-              selectedTeam &&
-              handleTeamRequest("accept", selectedTeam, user._id)
-            }
-          >
-            Accept
-          </Button>
-          <Button
-            size="sm"
-            color="failure"
-            onClick={() =>
-              selectedTeam &&
-              handleTeamRequest("reject", selectedTeam, user._id)
-            }
-          >
-            Reject
-          </Button>
-        </>
-      );
-    }
-
-    if (!hasJoinRequest && !isInvited) {
-      return (
-        <Button
-          size="sm"
-          onClick={() =>
-            selectedTeam && handleInviteMember(selectedTeam, user._id)
-          }
-        >
-          Invite
-        </Button>
-      );
-    }
-
-    if (!isTeamLeader) return <span className="text-gray-500">Requested</span>;
-
-    return null;
-  };
-
+  // Render
   const visibleTeams = teams.filter(
     (team) => !team.invited_users.some((u) => u.user_id === currentUser?._id),
   );
@@ -218,63 +110,12 @@ const TeamPage: React.FC<TeamPageProps> = () => {
                       );
                     })}
                   </ul>
-                  <Button
-                    size="sm"
-                    className="team-options w-full"
-                    onClick={() => {
-                      setSelectedTeam(team._id);
-                      setIsInviteModalOpen(true);
-                    }}
-                  >
-                    + Invite Member
-                  </Button>
+                  <InviteUser selectedTeamId={team._id} />
                 </div>
               </div>
             ))}
         </div>
       )}
-
-      <Modal show={isInviteModalOpen} onClose={handleModalClose}>
-        <Modal.Header>Invite Team Member</Modal.Header>
-        <Modal.Body>
-          {inviteError && (
-            <div className="mb-4 text-red-500">{inviteError}</div>
-          )}
-          <div className="space-y-4">
-            {allUsers
-              .filter(
-                (user) =>
-                  !teams
-                    .find((t) => t._id === selectedTeam)
-                    ?.members_lists.some(
-                      (member) => member.user_id === user._id,
-                    ) &&
-                  teams.find((t) => t._id === selectedTeam)?.leader_id !==
-                    user._id,
-              )
-              .map((user) => {
-                const selectedTeamData = teams.find(
-                  (t) => t._id === selectedTeam,
-                );
-
-                return (
-                  <div
-                    key={user._id}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      {renderAvatar(user)}
-                      <span>{user.username}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      {renderTeamMemberActions(user, selectedTeamData)}
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-        </Modal.Body>
-      </Modal>
     </WidgetWrapper>
   );
 };
