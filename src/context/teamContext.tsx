@@ -9,6 +9,11 @@ export const getUserTeams = async () => {
   return response.data.teams;
 };
 
+export const createTeam = async (teamName: string) => {
+  const response = await axios.post("/createTeam", { team_name: teamName });
+  return response.data;
+};
+
 export const sendTeamInvitation = async (team_id: string, invited_user_id: string) => {
   const response = await axios.post('/inviteMember', { team_id, invited_user_id });
   return response.data;

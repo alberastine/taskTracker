@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext, useCallback } from "react";
 import { getUserTeams } from "../../context/teamContext";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { Button } from "flowbite-react";
 import { UserContext } from "../../context/userContext";
 import { Team } from "../../models/Team";
 import { User } from "../../models/User";
@@ -11,6 +10,8 @@ import InviteUser from "./InviteUser";
 import axios from "../../api/axios";
 
 import "../../styles/components/TeamPage.css";
+import CreateTeam from "./CreateTeam";
+import { Button } from "antd";
 
 const TeamPage = () => {
   // State management
@@ -47,7 +48,7 @@ const TeamPage = () => {
     Promise.all([fetchAllUsers(), fetchTeams()]).catch((err) =>
       console.error("Failed to initialize data:", err),
     );
-  }, [fetchAllUsers, fetchTeams]);
+  }, [fetchTeams, fetchAllUsers]);
 
   // Render
   const visibleTeams = teams.filter(
@@ -57,9 +58,7 @@ const TeamPage = () => {
   return (
     <WidgetWrapper>
       <header className="teams-header">
-        <Button size="sm" className="team-options">
-          + Create Team
-        </Button>
+        <CreateTeam onTeamCreated={fetchTeams} />
       </header>
 
       {loading ? (
@@ -110,7 +109,19 @@ const TeamPage = () => {
                       );
                     })}
                   </ul>
-                  <InviteUser selectedTeamId={team._id} />
+                  {team.members_lists.length >= team.member_limit ? (
+                    <Button
+                      className="team-options w-full"
+                      disabled
+                      style={{
+                        backgroundColor: "rgb(14 116 144)",
+                        color: "white",
+                        border: "none",
+                      }}
+                    > Team limit reached</Button>
+                  ) : (
+                    <InviteUser selectedTeamId={team._id} />
+                  )}
                 </div>
               </div>
             ))}
