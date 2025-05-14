@@ -1,11 +1,12 @@
 import { useEffect, useState, useContext, useCallback } from "react";
-import { getUserTeams, sendTeamInvitation } from "../context/teamContext";
-import { Team } from "../models/Team";
-import axios from "../api/axios";
+import { getUserTeams, sendTeamInvitation } from "../../context/teamContext";
+import { Team } from "../../models/Team";
+import axios from "../../api/axios";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Modal, Button } from "flowbite-react";
-import { UserContext } from "../context/userContext";
-import "../styles/components/TeamPage.css";
+import { UserContext } from "../../context/userContext";
+import "../../styles/components/TeamPage.css";
+import WidgetWrapper from "../WidgetWrapper";
 
 // Types
 interface User {
@@ -157,8 +158,12 @@ const TeamPage: React.FC<TeamPageProps> = () => {
     return null;
   };
 
+  const visibleTeams = teams.filter(
+    (team) => !team.invited_users.some((u) => u.user_id === currentUser?._id),
+  );
+
   return (
-    <div className="teams-container">
+    <WidgetWrapper>
       <header className="teams-header">
         <Button size="sm" className="team-options">
           + Create Team
@@ -169,54 +174,63 @@ const TeamPage: React.FC<TeamPageProps> = () => {
         <div className="loading-spinner">Loading...</div>
       ) : error ? (
         <div className="error-message">Error: {error}</div>
-      ) : teams.length === 0 ? (
+      ) : visibleTeams.length === 0 ? (
         <p>You are not a member of any teams</p>
       ) : (
         <div className="teams-grid">
-          {teams.map((team) => (
-            <div key={team._id} className="team-card">
-              <div className="team-card-header">
-                <h3>{team.team_name}</h3>
-                <HiDotsHorizontal size={20} />
+          {teams
+            .filter(
+              (team) =>
+                !team.invited_users.some((u) => u.user_id === currentUser?._id),
+            )
+            .map((team) => (
+              <div key={team._id} className="team-card">
+                <div className="team-card-header">
+                  <strong>{team.team_name}</strong>
+
+                  <HiDotsHorizontal size={20} />
+                </div>
+                <div className="team-members">
+                  <h4>
+                    Team Members ({team.members_lists.length}/
+                    {team.member_limit})
+                  </h4>
+                  <ul className="members-list">
+                    {team.members_lists.map((member) => {
+                      const foundUser = allUsers.find(
+                        (user) => user._id === member.user_id,
+                      );
+                      return (
+                        <li key={member.user_id} className="member-item">
+                          <span className="member-avatar">
+                            {foundUser?.profilePic ? (
+                              <img
+                                src={`http://localhost:5000${foundUser.profilePic}`}
+                                alt={`${member.username}'s avatar`}
+                                className="profile-pic"
+                              />
+                            ) : (
+                              member.username.charAt(0).toUpperCase()
+                            )}
+                          </span>
+                          <span className="member-name">{member.username}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <Button
+                    size="sm"
+                    className="team-options w-full"
+                    onClick={() => {
+                      setSelectedTeam(team._id);
+                      setIsInviteModalOpen(true);
+                    }}
+                  >
+                    + Invite Member
+                  </Button>
+                </div>
               </div>
-              <div className="team-members">
-                <h4>Team Members ({team.members_lists.length})</h4>
-                <ul className="members-list">
-                  {team.members_lists.map((member) => {
-                    const foundUser = allUsers.find(
-                      (user) => user._id === member.user_id,
-                    );
-                    return (
-                      <li key={member.user_id} className="member-item">
-                        <span className="member-avatar">
-                          {foundUser?.profilePic ? (
-                            <img
-                              src={`http://localhost:5000${foundUser.profilePic}`}
-                              alt={`${member.username}'s avatar`}
-                              className="profile-pic"
-                            />
-                          ) : (
-                            member.username.charAt(0).toUpperCase()
-                          )}
-                        </span>
-                        <span className="member-name">{member.username}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-                <Button
-                  size="sm"
-                  className="team-options w-full"
-                  onClick={() => {
-                    setSelectedTeam(team._id);
-                    setIsInviteModalOpen(true);
-                  }}
-                >
-                  + Invite Member
-                </Button>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
 
@@ -261,7 +275,7 @@ const TeamPage: React.FC<TeamPageProps> = () => {
           </div>
         </Modal.Body>
       </Modal>
-    </div>
+    </WidgetWrapper>
   );
 };
 

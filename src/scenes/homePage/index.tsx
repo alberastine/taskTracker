@@ -2,8 +2,9 @@ import SibeBar from "../sideBar";
 import NavBar from "../navBar";
 import TaskList from "../../component/taskpage/TaskList";
 import Calendar from "../../component/Calendar";
-import TeamPage from "../../component/Team";
+import TeamPage from "../../component/teampage/Team";
 import UserProfile from "../../component/userpage/UserProfile";
+import Notification from "../../component/notificationspage/Notification";
 import { useState } from "react";
 
 const HomePage = () => {
@@ -19,6 +20,8 @@ const HomePage = () => {
         return <Calendar />;
       case 3:
         return <TeamPage />;
+      case 4:
+        return <Notification/>;
       default:
         return null;
     }
