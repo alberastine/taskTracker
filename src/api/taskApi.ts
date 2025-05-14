@@ -1,6 +1,13 @@
 import axios from "./axios";
 import { Task } from "../models/User";
 
+interface UpdatedTask {
+  taskName: string;
+  dateStarted: string;
+  deadline: string;
+  status: string;
+}
+
 export const taskApi = {
   addTask: async (TaskData: Task) => {
     try {
@@ -17,6 +24,16 @@ export const taskApi = {
       return response.data;
     } catch (error) {
       console.error("Error deleting task:", error);
+      throw error;
+    }
+  },
+
+  updateTask: async (taskId: string, TaskData: UpdatedTask) => {
+    try {
+      const response = await axios.put(`/updateTask/${taskId}`, TaskData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating task:", error);
       throw error;
     }
   },

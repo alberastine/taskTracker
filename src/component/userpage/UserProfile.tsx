@@ -1,7 +1,6 @@
-import { Form, Button, message } from "antd";
+import { Form, Button, message, Input } from "antd";
 import { useContext, useState, useEffect, useCallback } from "react";
 import { UserContext } from "../../context/userContext";
-import { Input } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { AxiosError } from "axios";
 import { userApi } from "../../api/userApi";
@@ -14,7 +13,7 @@ import EditProfilePhoto from "./EditProfilePhoto";
 import axios from "../../api/axios";
 
 import "../../styles/components/UserProfile.css";
-
+  
 interface UpdateUserData {
   username?: string;
   gmail?: string;

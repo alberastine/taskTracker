@@ -1,62 +1,148 @@
-import { Button, Modal } from "flowbite-react";
+import { Button, Modal, Form, Input, DatePicker, message } from "antd";
 import { useState } from "react";
+import { Task } from "../../models/User";
+import { taskApi } from "../../api/taskApi";
+
+import dayjs from "dayjs";
 
 import "../../styles/components/EditTask.css";
+import { LoadingOutlined } from "@ant-design/icons";
 
-interface TaskData {
-  _id: string;
+interface TaskListEditDetailsProps {
+  task: Task;
+}
+
+interface UpdatedTask {
   taskName: string;
   dateStarted: string;
   deadline: string;
   status: string;
 }
 
-interface TaskListEditDetailsProps {
-  task: TaskData;
-}
-
 const TaskListEditDetails = ({ task }: TaskListEditDetailsProps) => {
+  const [form] = Form.useForm();
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
 
-  const handleEditClick = () => {
+  const handleEditClick = (taskId: string) => {
+    console.log("taskId :", taskId);
+    setSelectedTaskId(taskId);
     setOpenModal(true);
   };
 
+  const handleUpdateTask = async (value: UpdatedTask) => {
+    if (!selectedTaskId) return;
+    try {
+      const updatedTask = {
+        taskName: value.taskName,
+        dateStarted: value.dateStarted,
+        deadline: value.deadline,
+        status: value.status,
+      };
+      console.log(updatedTask);
+      setLoading(true);
+      setShowSpinner(true);
+
+      const delay = new Promise((resolve) => setTimeout(resolve, 1500));
+      await delay;
+
+      await taskApi.updateTask(selectedTaskId, updatedTask);
+      setOpenModal(false);
+      message.success("Updated task successfully");
+    } catch (error) {
+      console.error("Error updating task:", error);
+      message.error("Failed to delete task");
+    } finally {
+      setLoading(false);
+      setShowSpinner(false);
+    }
+  };
   return (
     <div>
       <div>
         <a
-          onClick={handleEditClick}
+          onClick={() => handleEditClick(task._id)}
           className="cursor-pointer font-medium text-cyan-600 hover:underline dark:text-cyan-500"
         >
           Edit
         </a>
       </div>
 
-      <Modal show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header>Task Details</Modal.Header>
-        <Modal.Body>
-          <div className="space-y-2">
-            <p>
-              <strong>Task Name:</strong> {task.taskName}
-            </p>
-            <p>
-              <strong>Date Started:</strong>{" "}
-              {new Date(task.dateStarted).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Deadline:</strong>{" "}
-              {new Date(task.deadline).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Status:</strong> {task.status}
-            </p>
-          </div>
-        </Modal.Body>
-        <Modal.Footer className="flex justify-end">
-          <Button onClick={() => setOpenModal(false)}>Close</Button>
-          <Button>Save</Button>
-        </Modal.Footer>
+      <Modal
+        title="Edit Task"
+        open={openModal}
+        onCancel={() => setOpenModal(false)}
+        footer={null}
+      >
+        <Form
+          form={form}
+          layout="horizontal"
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 16 }}
+          style={{ maxWidth: 600 }}
+          autoComplete="off"
+          onFinish={handleUpdateTask}
+          initialValues={{
+            taskName: task.taskName,
+            dateStarted: dayjs(task.dateStarted),
+            deadline: dayjs(task.deadline),
+            status: task.status,
+          }}
+        >
+          <Form.Item label="Task Name" name="taskName">
+            <Input
+              style={{
+                width: "100%",
+                border: "1px solid #d9d9d9",
+                borderRadius: "6px",
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item label="Date Started" name="dateStarted">
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
+
+          <Form.Item label="Deadline" name="deadline">
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
+
+          <Form.Item label="Status" name="status">
+            <Input
+              style={{
+                width: "100%",
+                border: "1px solid #d9d9d9",
+                borderRadius: "6px",
+              }}
+            />
+          </Form.Item>
+          <>
+            <div className="flex justify-end gap-2">
+              <Button
+                onClick={() => setOpenModal(false)}
+                style={{
+                  backgroundColor: "rgb(220, 20, 60)",
+                  color: "white",
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={loading}
+                type="primary"
+                htmlType="submit"
+                style={{
+                  backgroundColor: "rgb(14 116 144)",
+                  color: "white",
+                }}
+              >
+                Save {showSpinner && <LoadingOutlined />}
+              </Button>
+            </div>
+          </>
+        </Form>
       </Modal>
     </div>
   );
