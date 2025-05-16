@@ -204,6 +204,11 @@ const TaskCalendar = () => {
                     ? setEditingEventTitle(e.target.value)
                     : setNewEventTitle(e.target.value)
                 }
+                style={{
+                  width: "100%",
+                  border: "1px solid #d9d9d9",
+                  borderRadius: "6px",
+                }}
                 placeholder="Enter event title"
                 className="event-input"
               />

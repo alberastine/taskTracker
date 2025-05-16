@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext, useCallback } from "react";
 import { getUserTeams } from "../../context/teamContext";
-import { HiDotsHorizontal } from "react-icons/hi";
+// import { HiDotsHorizontal } from "react-icons/hi";
 import { UserContext } from "../../context/userContext";
 import { Team } from "../../models/Team";
 import { User } from "../../models/User";
@@ -12,6 +12,8 @@ import axios from "../../api/axios";
 import "../../styles/components/TeamPage.css";
 import CreateTeam from "./CreateTeam";
 import { Button } from "antd";
+import DeleteTeam from "./DeleteTeam";
+import LeaveTeam from "./LeaveTeam";
 
 const TeamPage = () => {
   // State management
@@ -79,7 +81,25 @@ const TeamPage = () => {
                 <div className="team-card-header">
                   <strong>{team.team_name}</strong>
 
-                  <HiDotsHorizontal size={20} />
+                  {team.leader_id === currentUser?._id ? (
+                    <DeleteTeam
+                      selectedTeamId={team._id}
+                      onTeamDeleted={fetchTeams}
+                    />
+                  ) : (
+                    <LeaveTeam selectedTeamId={team._id}
+                      onTeamLeaved={fetchTeams}/>
+                  )}
+
+                  {/* <Button
+                    icon={<HiDotsHorizontal size={20} />}
+                    style={{
+                      border: "none",
+                      color: "black",
+                      cursor: "pointer",
+                      padding: "0",
+                    }}
+                  ></Button> */}
                 </div>
                 <div className="team-members">
                   <h4>
@@ -118,7 +138,9 @@ const TeamPage = () => {
                         color: "white",
                         border: "none",
                       }}
-                    > Team limit reached</Button>
+                    >
+                      Team limit reached
+                    </Button>
                   ) : (
                     <InviteUser selectedTeamId={team._id} />
                   )}

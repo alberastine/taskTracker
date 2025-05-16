@@ -63,7 +63,6 @@ const TaskList = () => {
       console.error("Error deleting task:", error);
       message.error("Failed to delete task");
     } finally {
-      // Hide spinner and loading state
       setLoading(false);
       setShowSpinner(false);
     }
