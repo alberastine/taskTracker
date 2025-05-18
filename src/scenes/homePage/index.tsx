@@ -3,13 +3,14 @@ import NavBar from "../navBar";
 import TaskList from "../../component/taskpage/TaskList";
 import Calendar from "../../component/Calendar";
 import TeamPage from "../../component/teampage/Team";
+import TeamDetailsPage from "../../component/teamdetailspage/TeamDetails";
 import UserProfile from "../../component/userpage/UserProfile";
 import Notification from "../../component/notificationspage/Notification";
 import { useState } from "react";
 
 const HomePage = () => {
   const [activeWidget, setActiveWidget] = useState<number>(0);
-
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const renderWidget = (key: number) => {
     switch (key) {
       case 0:
@@ -19,9 +20,21 @@ const HomePage = () => {
       case 2:
         return <Calendar />;
       case 3:
-        return <TeamPage />;
+        return (
+          <TeamPage
+            setActiveWidget={setActiveWidget}
+            setSelectedTeamId={setSelectedTeamId}
+          />
+        );
       case 4:
-        return <Notification/>;
+        return <Notification />;
+      case 5:
+        return (
+          <TeamDetailsPage
+            teamId={selectedTeamId}
+            setActiveWidget={setActiveWidget}
+          />
+        );
       default:
         return null;
     }
@@ -30,7 +43,7 @@ const HomePage = () => {
   return (
     <div>
       <div className="display-flex">
-        <div>
+        <div className="sticky top-0 z-10">
           <NavBar />
         </div>
         <div>

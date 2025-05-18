@@ -18,6 +18,8 @@ export interface MembersList {
 export interface TeamTask {
   task_id: string;
   task_name: string;
+  assigned_to: string;
+  description: string;
   date_started: string;
   deadline: string;
   status: string;
@@ -26,10 +28,12 @@ export interface TeamTask {
 export interface Team {
   _id: string;
   team_name: string;
+  leader_username: string;
   leader_id: string;
   member_limit: number;
   invited_users: InvitedUser[];
   join_requests: JoinReuest[];
   members_lists: MembersList[];
   tasks: TeamTask[];
+  createdAt: Date;
 }

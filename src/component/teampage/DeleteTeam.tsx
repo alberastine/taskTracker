@@ -6,18 +6,17 @@ import { useState } from "react";
 const DeleteTeam = ({
   selectedTeamId,
   onTeamDeleted,
+  setActiveWidget,
 }: {
   selectedTeamId: string;
   onTeamDeleted: () => void;
+  setActiveWidget: (key: number) => void;
 }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
   const handleDeleteTeam = async () => {
-    if (!selectedTeam) return;
-
     try {
       setLoading(true);
       setShowSpinner(true);
@@ -25,9 +24,12 @@ const DeleteTeam = ({
 
       await delay;
 
-      await deleteTeam(selectedTeam);
+      await deleteTeam(selectedTeamId);
       onTeamDeleted();
       setIsDeleteModalOpen(false);
+
+      setActiveWidget(3);
+
       message.success("Team deleted successfully");
     } catch (err) {
       console.error("Failed to delete team:", err);
@@ -40,10 +42,8 @@ const DeleteTeam = ({
   return (
     <div>
       <Button
-        type="primary"
-        danger
+        style={{ backgroundColor: "rgb(220, 20, 60)", color: "white" }}
         onClick={() => {
-          setSelectedTeam(selectedTeamId);
           setIsDeleteModalOpen(true);
         }}
       >

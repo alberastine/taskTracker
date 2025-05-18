@@ -41,8 +41,11 @@ const LeaveTeam = ({
   return (
     <div>
       <Button
-        type="primary"
-        danger
+        style={{
+          backgroundColor: "rgb(220, 20, 60)",
+          color: "white",
+          border: "none",
+        }}
         onClick={() => {
           setSelectedTeam(selectedTeamId);
           setIsLeaveModalOpen(true);

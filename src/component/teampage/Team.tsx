@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext, useCallback } from "react";
 import { getUserTeams } from "../../context/teamContext";
-// import { HiDotsHorizontal } from "react-icons/hi";
 import { UserContext } from "../../context/userContext";
 import { Team } from "../../models/Team";
 import { User } from "../../models/User";
@@ -11,12 +10,15 @@ import axios from "../../api/axios";
 
 import "../../styles/components/TeamPage.css";
 import CreateTeam from "./CreateTeam";
-import { Button } from "antd";
-import DeleteTeam from "./DeleteTeam";
-import LeaveTeam from "./LeaveTeam";
+import { Button, Empty } from "antd";
 
-const TeamPage = () => {
-  // State management
+const TeamPage = ({
+  setActiveWidget,
+  setSelectedTeamId,
+}: {
+  setActiveWidget: (key: number) => void;
+  setSelectedTeamId: (teamId: string) => void;
+}) => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +26,6 @@ const TeamPage = () => {
 
   const { user: currentUser } = useContext(UserContext);
 
-  // API calls
   const fetchAllUsers = useCallback(async () => {
     try {
       const { data } = await axios.get<User[]>("/allUserInfo");
@@ -52,7 +53,6 @@ const TeamPage = () => {
     );
   }, [fetchTeams, fetchAllUsers]);
 
-  // Render
   const visibleTeams = teams.filter(
     (team) => !team.invited_users.some((u) => u.user_id === currentUser?._id),
   );
@@ -68,85 +68,70 @@ const TeamPage = () => {
       ) : error ? (
         <div className="error-message">Error: {error}</div>
       ) : visibleTeams.length === 0 ? (
-        <p>You are not a member of any teams</p>
+        <Empty description="You are not a member of any teams" />
       ) : (
         <div className="teams-grid">
-          {teams
-            .filter(
-              (team) =>
-                !team.invited_users.some((u) => u.user_id === currentUser?._id),
-            )
-            .map((team) => (
-              <div key={team._id} className="team-card">
-                <div className="team-card-header">
-                  <strong>{team.team_name}</strong>
-
-                  {team.leader_id === currentUser?._id ? (
-                    <DeleteTeam
-                      selectedTeamId={team._id}
-                      onTeamDeleted={fetchTeams}
-                    />
-                  ) : (
-                    <LeaveTeam selectedTeamId={team._id}
-                      onTeamLeaved={fetchTeams}/>
-                  )}
-
-                  {/* <Button
-                    icon={<HiDotsHorizontal size={20} />}
-                    style={{
-                      border: "none",
-                      color: "black",
-                      cursor: "pointer",
-                      padding: "0",
-                    }}
-                  ></Button> */}
-                </div>
-                <div className="team-members">
-                  <h4>
-                    Team Members ({team.members_lists.length}/
-                    {team.member_limit})
-                  </h4>
-                  <ul className="members-list">
-                    {team.members_lists.map((member) => {
-                      const foundUser = allUsers.find(
-                        (user) => user._id === member.user_id,
-                      );
-                      return (
-                        <li key={member.user_id} className="member-item">
-                          <span className="member-avatar">
-                            {foundUser?.profilePic ? (
-                              <img
-                                src={`http://localhost:5000${foundUser.profilePic}`}
-                                alt={`${member.username}'s avatar`}
-                                className="profile-pic"
-                              />
-                            ) : (
-                              member.username.charAt(0).toUpperCase()
-                            )}
-                          </span>
-                          <span className="member-name">{member.username}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  {team.members_lists.length >= team.member_limit ? (
-                    <Button
-                      className="team-options w-full"
-                      disabled
-                      style={{
-                        backgroundColor: "rgb(14 116 144)",
-                        color: "white",
-                        border: "none",
-                      }}
-                    >
-                      Team limit reached
-                    </Button>
-                  ) : (
-                    <InviteUser selectedTeamId={team._id} />
-                  )}
-                </div>
+          {visibleTeams.map((team) => (
+            <div key={team._id} className="team-card">
+              <div className="team-card-header">
+                <strong>{team.team_name}</strong>
+                <Button
+                  className="team-options"
+                  onClick={() => {
+                    setSelectedTeamId(team._id);
+                    setActiveWidget(5);
+                  }}
+                >
+                  View Team
+                </Button>
               </div>
-            ))}
+              <div className="team-members">
+                <h4>
+                  Team Members ({team.members_lists.length}/{team.member_limit})
+                </h4>
+                <ul className="members-list">
+                  {team.members_lists.map((member) => {
+                    const foundUser = allUsers.find(
+                      (user) => user._id === member.user_id,
+                    );
+                    return (
+                      <li key={member.user_id} className="member-item">
+                        <span className="member-avatar">
+                          {foundUser?.profilePic ? (
+                            <img
+                              src={`http://localhost:5000${foundUser?.profilePic ?? ""}`}
+                              alt={`${member.username}'s avatar`}
+                              className="profile-pic"
+                            />
+                          ) : (
+                            member.username.charAt(0).toUpperCase()
+                          )}
+                        </span>
+                        <span className="member-name">
+                          {foundUser?.username ?? member.username}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {team.members_lists.length >= team.member_limit ? (
+                  <Button
+                    className="team-options w-full"
+                    disabled
+                    style={{
+                      backgroundColor: "rgb(14 116 144)",
+                      color: "white",
+                      border: "none",
+                    }}
+                  >
+                    Team limit reached
+                  </Button>
+                ) : (
+                  <InviteUser selectedTeamId={team._id} />
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </WidgetWrapper>

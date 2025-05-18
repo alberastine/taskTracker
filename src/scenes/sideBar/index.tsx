@@ -22,27 +22,46 @@ const SibeBar = ({
             Task Tracker
           </span>
           <Sidebar.ItemGroup>
-            <Sidebar.Item icon={HiUser} onClick={() => setActiveWidget(0)}>
+            <Sidebar.Item
+              icon={HiUser}
+              onClick={() => setActiveWidget(0)}
+              style={{ cursor: "pointer" }}
+            >
               Profile
             </Sidebar.Item>
-            <Sidebar.Item icon={HiChartPie} onClick={() => setActiveWidget(1)}>
+            <Sidebar.Item
+              icon={HiChartPie}
+              onClick={() => setActiveWidget(1)}
+              style={{ cursor: "pointer" }}
+            >
               Task table
             </Sidebar.Item>
             <Sidebar.Item
               icon={FaRegCalendar}
               onClick={() => setActiveWidget(2)}
+              style={{ cursor: "pointer" }}
             >
               Calendar
             </Sidebar.Item>
             <Sidebar.Item
               icon={HiOutlineUserGroup}
               onClick={() => setActiveWidget(3)}
+              style={{ cursor: "pointer" }}
             >
               My Team
             </Sidebar.Item>
-            <Sidebar.Collapse icon={HiInbox} label="Inbox">
-              <Sidebar.Item>Deadlines</Sidebar.Item>
-              <Sidebar.Item onClick={() => setActiveWidget(4)}>
+            <Sidebar.Collapse
+              icon={HiInbox}
+              label="Inbox"
+              style={{ cursor: "pointer" }}
+            >
+              <Sidebar.Item style={{ cursor: "pointer" }}>
+                Deadlines
+              </Sidebar.Item>
+              <Sidebar.Item
+                onClick={() => setActiveWidget(4)}
+                style={{ cursor: "pointer" }}
+              >
                 Notification
               </Sidebar.Item>
             </Sidebar.Collapse>

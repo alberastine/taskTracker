@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import { Task } from "../../models/User";
 import { taskApi } from "../../api/taskApi";
-import { Button, message, Modal } from "antd";
+import { Button, Empty, message, Modal } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
 import AddTask from "./AddTask";
@@ -139,7 +139,7 @@ const TaskList = () => {
             ) : (
               <Table.Row>
                 <Table.Cell colSpan={6} className="text-center">
-                  You have not added any tasks
+                  <Empty description="No tasks listed" />
                 </Table.Cell>
               </Table.Row>
             )}

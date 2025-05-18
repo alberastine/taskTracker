@@ -56,7 +56,7 @@ const LatestTasks = ({
         .slice(0, 3)
         .map((task, index) => (
           <div
-            key={task.id || index}
+            key={task._id || index}
             className={`flow-root rounded-lg ${
               task.status === "Completed"
                 ? "bg-[#A7F3D0]/70"
