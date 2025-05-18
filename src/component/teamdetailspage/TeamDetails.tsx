@@ -1,4 +1,5 @@
 import { Team } from "../../models/Team";
+import { TeamTask } from "../../models/Team";
 import { useEffect, useState, useContext, useCallback } from "react";
 import { getUserTeams } from "../../context/teamContext";
 import {
@@ -11,6 +12,8 @@ import {
   Row,
   Col,
   Button,
+  Tag,
+  Table,
 } from "antd";
 import WidgetWrapper from "../WidgetWrapper";
 import DeleteTeam from "../../component/teampage/DeleteTeam";
@@ -48,8 +51,61 @@ const TeamDetailsPage = ({
   if (!team) {
     return <Card style={{ margin: "2rem" }}>Loading or team not found...</Card>;
   }
-
   const createdAt = new Date(team.createdAt);
+
+  const taskColumns = [
+    {
+      title: "Task Name",
+      dataIndex: "task_name",
+      key: "task_name",
+      render: (text: string, record: TeamTask) => (
+        <>
+          <Text strong>{text}</Text>
+          <br />
+          <Text type="secondary">{record.description || "No description"}</Text>
+        </>
+      ),
+    },
+    {
+      title: "Deadline",
+      dataIndex: "deadline",
+      key: "deadline",
+      render: (date: string) =>
+        date ? new Date(date).toLocaleDateString() : "None",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status: string) => (
+        <Tag color="blue">{status || "Not started"}</Tag>
+      ),
+    },
+    {
+      title: "Assigned To",
+      dataIndex: "assigned_to",
+      key: "assigned_to",
+      render: (assignedTo: string) =>
+        assignedTo ? (
+          <Text>{assignedTo}</Text>
+        ) : (
+          <Button
+            style={{
+              backgroundColor: "rgb(14 116 144)",
+              color: "white",
+              border: "none",
+            }}
+          >
+            Assign To
+          </Button>
+        ),
+    },
+  ];
+
+  const taskData = team.tasks.map((task, index) => ({
+    key: index,
+    ...task,
+  }));
 
   return (
     <WidgetWrapper>
@@ -113,31 +169,10 @@ const TeamDetailsPage = ({
 
         <Divider orientation="left">Tasks</Divider>
         {team.tasks.length > 0 ? (
-          <List
-            bordered
-            dataSource={team.tasks}
-            renderItem={(task) => (
-              <List.Item>
-                <div style={{ width: "100%" }}>
-                  <Text strong>{task.task_name}</Text>
-                  <br />
-                  <Text type="secondary">
-                    {task.description || "No description"}
-                  </Text>
-                  <br />
-                  <Text>Assigned To: {task.assigned_to || "Unassigned"}</Text>
-                  <br />
-                  <Text>
-                    Due Date:{" "}
-                    {task.deadline
-                      ? new Date(task.deadline).toLocaleDateString()
-                      : "None"}
-                  </Text>
-                  <br />
-                  <Text>Status: {task.status || "Not started"}</Text>
-                </div>
-              </List.Item>
-            )}
+          <Table
+            columns={taskColumns}
+            dataSource={taskData}
+            pagination={false}
           />
         ) : (
           <Empty description="No tasks" />
