@@ -5,12 +5,12 @@ import { Team } from "../../models/Team";
 import { User } from "../../models/User";
 
 import WidgetWrapper from "../WidgetWrapper";
-import InviteUser from "./InviteUser";
 import axios from "../../api/axios";
 
 import "../../styles/components/TeamPage.css";
 import CreateTeam from "./CreateTeam";
-import { Button, Empty } from "antd";
+import { Empty, Popover, Button } from "antd";
+import { BgColorsOutlined } from "@ant-design/icons";
 
 const TeamPage = ({
   setActiveWidget,
@@ -19,17 +19,21 @@ const TeamPage = ({
   setActiveWidget: (key: number) => void;
   setSelectedTeamId: (teamId: string) => void;
 }) => {
-  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [teamColors, setTeamColors] = useState<{ [teamId: string]: string }>(
+    () => {
+      const saved = localStorage.getItem("teamColors");
+      return saved ? JSON.parse(saved) : {};
+    },
+  );
 
   const { user: currentUser } = useContext(UserContext);
 
   const fetchAllUsers = useCallback(async () => {
     try {
-      const { data } = await axios.get<User[]>("/allUserInfo");
-      setAllUsers(data);
+      await axios.get<User[]>("/allUserInfo");
     } catch (err) {
       console.error("Failed to fetch users:", err);
       setError("Failed to fetch users");
@@ -53,6 +57,21 @@ const TeamPage = ({
     );
   }, [fetchTeams, fetchAllUsers]);
 
+  useEffect(() => {
+    const savedColors = localStorage.getItem("teamColors");
+    if (savedColors) {
+      setTeamColors(JSON.parse(savedColors));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("teamColors", JSON.stringify(teamColors));
+  }, [teamColors]);
+
+  const changeTeamColor = (teamId: string, color: string) => {
+    setTeamColors((prev) => ({ ...prev, [teamId]: color }));
+  };
+
   const visibleTeams = teams.filter(
     (team) => !team.invited_users.some((u) => u.user_id === currentUser?._id),
   );
@@ -72,63 +91,53 @@ const TeamPage = ({
       ) : (
         <div className="teams-grid">
           {visibleTeams.map((team) => (
-            <div key={team._id} className="team-card">
+            <div
+              key={team._id}
+              className="team-card"
+              onClick={() => {
+                setSelectedTeamId(team._id);
+                setActiveWidget(5);
+              }}
+              style={{
+                cursor: "pointer",
+                backgroundColor: teamColors[team._id] || "#ffffff",
+                position: "relative",
+              }}
+            >
+              <Popover
+                content={
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="color"
+                      value={teamColors[team._id] || "#ffffff"}
+                      onChange={(e) => {
+                        changeTeamColor(team._id, e.target.value);
+                      }}
+                    />
+                  </div>
+                }
+                title="Pick a background color"
+                trigger="click"
+              >
+                <Button
+                  shape="circle"
+                  icon={<BgColorsOutlined />}
+                  size="small"
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    zIndex: 10,
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </Popover>
+
               <div className="team-card-header">
                 <strong>{team.team_name}</strong>
-                <Button
-                  className="team-options"
-                  onClick={() => {
-                    setSelectedTeamId(team._id);
-                    setActiveWidget(5);
-                  }}
-                >
-                  View Team
-                </Button>
-              </div>
-              <div className="team-members">
-                <h4>
-                  Team Members ({team.members_lists.length}/{team.member_limit})
-                </h4>
-                <ul className="members-list">
-                  {team.members_lists.map((member) => {
-                    const foundUser = allUsers.find(
-                      (user) => user._id === member.user_id,
-                    );
-                    return (
-                      <li key={member.user_id} className="member-item">
-                        <span className="member-avatar">
-                          {foundUser?.profilePic ? (
-                            <img
-                              src={`http://localhost:5000${foundUser?.profilePic ?? ""}`}
-                              alt={`${member.username}'s avatar`}
-                              className="profile-pic"
-                            />
-                          ) : (
-                            member.username.charAt(0).toUpperCase()
-                          )}
-                        </span>
-                        <span className="member-name">
-                          {foundUser?.username ?? member.username}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-                {team.members_lists.length >= team.member_limit ? (
-                  <Button
-                    className="team-options w-full"
-                    disabled
-                    style={{
-                      backgroundColor: "rgb(14 116 144)",
-                      color: "white",
-                      border: "none",
-                    }}
-                  >
-                    Team limit reached
-                  </Button>
-                ) : (
-                  <InviteUser selectedTeamId={team._id} />
-                )}
               </div>
             </div>
           ))}
