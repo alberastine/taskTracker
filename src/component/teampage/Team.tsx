@@ -131,6 +131,7 @@ const TeamPage = ({
                     top: 8,
                     right: 8,
                     zIndex: 10,
+                    backgroundColor: "#ffffff",
                   }}
                   onClick={(e) => e.stopPropagation()}
                 />
