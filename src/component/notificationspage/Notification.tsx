@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { Team } from "../../models/Team";
 import { getUserTeams, respondToInvitation } from "../../context/teamContext";
 import { UserContext } from "../../context/userContext";
-import { Button, message, Typography } from "antd";
+import { Button, Empty, message, Typography } from "antd";
 
 import WidgetWrapper from "../WidgetWrapper";
 
@@ -70,7 +70,7 @@ const Notification = () => {
     <WidgetWrapper>
       <div>
         {invitations.length === 0 ? (
-          <Typography>No notification at this time.</Typography>
+          <Empty description="No notification at this time." />
         ) : (
           invitations.map((team) => (
             <div key={team._id} className="child-notification">
