@@ -57,7 +57,7 @@ const ProgressChart = () => {
       </h5>
       {user.tasks.length > 0 ? (
         <PieChart
-          colors={["#A7F3D0", "#D1D5DB", "#FCA5A5"]}
+          colors={["#b7eb8f", "#91caff", "#ffa39e"]}
           series={[
             {
               data: [

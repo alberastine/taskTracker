@@ -141,7 +141,7 @@ const TeamDetailsPage = ({
           <Descriptions.Item label="Created At">
             {createdAt.toLocaleDateString()} at {createdAt.toLocaleTimeString()}
           </Descriptions.Item>
-          <Descriptions.Item label="Leader Username">
+          <Descriptions.Item label="Leader">
             {team.leader_username}
           </Descriptions.Item>
           <Descriptions.Item label="Member Limit">

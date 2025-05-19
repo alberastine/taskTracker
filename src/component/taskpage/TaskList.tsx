@@ -1,10 +1,10 @@
-import { Badge, Checkbox, Table } from "flowbite-react";
+import { Checkbox, Table } from "flowbite-react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import { Task } from "../../models/User";
 import { taskApi } from "../../api/taskApi";
-import { Button, Empty, message, Modal } from "antd";
+import { Button, Empty, message, Modal, Tag } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
 import AddTask from "./AddTask";
@@ -111,18 +111,18 @@ const TaskList = () => {
                   </Table.Cell>
                   <Table.Cell>
                     <p className="text-sm">
-                      <Badge
+                      <Tag
                         color={
                           task.status === "Completed"
-                            ? "success"
+                            ? "green"
                             : task.status === "Late"
-                              ? "failure"
-                              : "gray"
+                              ? "red"
+                              : "blue"
                         }
                         className={`px-2 py-1 ${task.status.length > 10 ? "text-lg" : "text-sm"} `}
                       >
                         {task.status}
-                      </Badge>
+                      </Tag>
                     </p>
                   </Table.Cell>
                   <Table.Cell className="flex items-center gap-6">

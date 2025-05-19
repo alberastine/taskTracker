@@ -1,7 +1,6 @@
 import { Card } from "flowbite-react";
 import { useCallback, useContext, useEffect } from "react";
 import { UserContext } from "../../context/userContext";
-
 import axios from "../../api/axios";
 
 const LatestTasks = ({
@@ -27,6 +26,20 @@ const LatestTasks = ({
   if (!user) {
     return <div>User not found</div>;
   }
+
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "Completed":
+        return "bg-[#f6ffed] border border-[#b7eb8f] text-[#389e0d]";
+      case "Ongoing":
+        return "bg-[#e6f4ff] border border-[#91caff] text-[#0958d9]";
+      case "Late":
+        return "bg-[#fff1f0] border border-[#ffa39e] text-[#cf1322]";
+      default:
+        return "bg-gray-50 border text-gray-700";
+    }
+  };
+
   return (
     <Card
       className="max-w-sm"
@@ -47,6 +60,7 @@ const LatestTasks = ({
           View all
         </button>
       </div>
+
       {[...user.tasks]
         .sort(
           (a, b) =>
@@ -57,34 +71,20 @@ const LatestTasks = ({
         .map((task, index) => (
           <div
             key={task._id || index}
-            className={`flow-root rounded-lg ${
-              task.status === "Completed"
-                ? "bg-[#A7F3D0]/70"
-                : task.status === "Ongoing"
-                  ? "bg-[#D1D5DB]/70"
-                  : task.status === "Late"
-                    ? "bg-[#FCA5A5]/70"
-                    : "bg-gray-50 dark:bg-gray-800"
-            }`}
+            className={`rounded-md p-2 shadow-sm ${getStatusStyle(
+              task.status,
+            )}`}
           >
-            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-              <li className="p-2 sm:py-2">
-                <div className="flex items-center space-x-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900">
-                      {task.taskName}
-                    </p>
-                    <p className="truncate text-sm text-gray-500">
-                      {new Date(task.dateStarted).toLocaleDateString()} to{" "}
-                      {new Date(task.deadline).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                    {task.status}
-                  </div>
-                </div>
-              </li>
-            </ul>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold">{task.taskName}</p>
+                <p className="text-sm">
+                  {new Date(task.dateStarted).toLocaleDateString()} to{" "}
+                  {new Date(task.deadline).toLocaleDateString()}
+                </p>
+              </div>
+              <span className="text-sm font-semibold">{task.status}</span>
+            </div>
           </div>
         ))}
     </Card>
