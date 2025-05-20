@@ -5,7 +5,13 @@ import InviteUser from "../teampage/InviteUser";
 
 const { Text } = Typography;
 
-const TeamMembers = ({ team }: { team: Team }) => {
+const TeamMembers = ({
+  team,
+  onTeamUpdated,
+}: {
+  team: Team;
+  onTeamUpdated: () => void;
+}) => {
   return (
     <div>
       <Divider orientation="left">
@@ -31,7 +37,10 @@ const TeamMembers = ({ team }: { team: Team }) => {
               Team limit reached
             </Button>
           ) : (
-            <InviteUser selectedTeamId={team._id} />
+            <InviteUser
+              selectedTeamId={team._id}
+              onTeamUpdated={onTeamUpdated}
+            />
           )}
         </div>
       </Divider>

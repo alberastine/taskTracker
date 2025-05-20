@@ -49,7 +49,7 @@ const TeamDetailsPage = ({
   const renderComponent = () => {
     switch (activeComponent) {
       case "one":
-        return <TeamMembers team={team} />;
+        return <TeamMembers team={team} onTeamUpdated={fetchTeamDetails} />;
       case "two":
         return <TeamTaskList team={team} />;
       case "three":

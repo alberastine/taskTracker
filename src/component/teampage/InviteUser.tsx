@@ -7,7 +7,7 @@ import { Team } from "../../models/Team";
 
 import axios from "../../api/axios";
 
-const InviteUser = ({ selectedTeamId }: { selectedTeamId: string }) => {
+const InviteUser = ({ selectedTeamId, onTeamUpdated, }: { selectedTeamId: string, onTeamUpdated?: () => void; }) => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -46,6 +46,7 @@ const InviteUser = ({ selectedTeamId }: { selectedTeamId: string }) => {
       setIsInviteModalOpen(false);
       setInviteError(null);
       await fetchTeams();
+      onTeamUpdated?.();
     } catch (error) {
       setInviteError("Failed to send invitation");
     }
