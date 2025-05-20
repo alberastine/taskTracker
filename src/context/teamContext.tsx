@@ -1,3 +1,4 @@
+import { TeamTask } from "../models/Team";
 import axios from "../api/axios";
 
 export const getUserTeams = async () => {
@@ -11,6 +12,14 @@ export const getUserTeams = async () => {
 
 export const createTeam = async (teamName: string) => {
   const response = await axios.post("/createTeam", { team_name: teamName });
+  return response.data;
+};
+
+export const addTeamTask = async (team_id: string, task: TeamTask) => {
+  const response = await axios.post("/addTeamTask", {
+    team_id,
+    task: [task],
+  });
   return response.data;
 };
 

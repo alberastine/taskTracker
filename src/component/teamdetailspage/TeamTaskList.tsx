@@ -2,10 +2,19 @@ import { Button, Divider, Empty, Table, Tag, Typography } from "antd";
 
 import { Team } from "../../models/Team";
 import { TeamTask } from "../../models/Team";
+import TeamAddTask from "./TeamAddTask";
+import { useContext } from "react";
+import { UserContext } from "../../context/userContext";
 
 const { Text } = Typography;
 
-const TeamTaskList = ({ team }: { team: Team }) => {
+const TeamTaskList = ({ team, onTeamUpdated, }: { team: Team, onTeamUpdated: () => void }) => {
+  const { user: currentUser } = useContext(UserContext);
+
+  const handleAssignClick = (task: TeamTask) => {
+    console.log("Assign clicked for task", task);
+  };
+
   const taskColumns = [
     {
       title: "Task Name",
@@ -38,20 +47,39 @@ const TeamTaskList = ({ team }: { team: Team }) => {
       title: "Assigned To",
       dataIndex: "assigned_to",
       key: "assigned_to",
-      render: (assignedTo: string) =>
-        assignedTo ? (
-          <Text>{assignedTo}</Text>
-        ) : (
-          <Button
-            style={{
-              backgroundColor: "rgb(14 116 144)",
-              color: "white",
-              border: "none",
-            }}
-          >
-            Assign To
-          </Button>
-        ),
+      render: (assignedTo: string, record: TeamTask) => {
+        if (assignedTo) {
+          return <Text>{assignedTo}</Text>;
+        } else {
+          if (team.leader_id === currentUser?._id) {
+            return (
+              <Button
+                style={{
+                  backgroundColor: "rgb(14 116 144)",
+                  color: "white",
+                  border: "none",
+                }}
+                onClick={() => handleAssignClick(record)}
+              >
+                Assign To
+              </Button>
+            );
+          } else {
+            return (
+              <Button
+                style={{
+                  backgroundColor: "rgb(14 116 144)",
+                  color: "white",
+                  border: "none",
+                }}
+                onClick={() => handleAssignClick(record)}
+              >
+                Claim task
+              </Button>
+            );
+          }
+        }
+      },
     },
   ];
 
@@ -62,7 +90,19 @@ const TeamTaskList = ({ team }: { team: Team }) => {
 
   return (
     <div>
-      <Divider orientation="left">Tasks</Divider>
+      <Divider orientation="left">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "1rem",
+          }}
+        >
+          <Text>Task</Text>
+          {team.leader_id === currentUser?._id ? <TeamAddTask team={team} onTeamUpdated={onTeamUpdated}/> : null}
+        </div>
+      </Divider>
       {team.tasks.length > 0 ? (
         <Table columns={taskColumns} dataSource={taskData} pagination={false} />
       ) : (

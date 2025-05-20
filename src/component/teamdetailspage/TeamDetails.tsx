@@ -51,7 +51,7 @@ const TeamDetailsPage = ({
       case "one":
         return <TeamMembers team={team} onTeamUpdated={fetchTeamDetails} />;
       case "two":
-        return <TeamTaskList team={team} />;
+        return <TeamTaskList team={team} onTeamUpdated={fetchTeamDetails}/>;
       case "three":
         return <TeamInviteUser team={team} />;
       case "four":

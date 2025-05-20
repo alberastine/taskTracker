@@ -16,11 +16,10 @@ export interface MembersList {
 }
 
 export interface TeamTask {
-  task_id: string;
   task_name: string;
   assigned_to: string;
   description: string;
-  date_started: string;
+  date_published: string;
   deadline: string;
   status: string;
 }

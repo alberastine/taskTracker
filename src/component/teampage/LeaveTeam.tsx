@@ -16,7 +16,6 @@ const LeaveTeam = ({
   const [showSpinner, setShowSpinner] = useState(false);
 
   const handleLeaveTeam = async () => {
-    console.log("selectedTeam", selectedTeam);
     if (!selectedTeam) return;
 
     try {

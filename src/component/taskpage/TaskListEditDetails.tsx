@@ -27,7 +27,6 @@ const TaskListEditDetails = ({ task }: TaskListEditDetailsProps) => {
   const [showSpinner, setShowSpinner] = useState(false);
 
   const handleEditClick = (taskId: string) => {
-    console.log("taskId :", taskId);
     setSelectedTaskId(taskId);
     setOpenModal(true);
   };
@@ -41,7 +40,6 @@ const TaskListEditDetails = ({ task }: TaskListEditDetailsProps) => {
         deadline: value.deadline,
         status: value.status,
       };
-      console.log(updatedTask);
       setLoading(true);
       setShowSpinner(true);
 
