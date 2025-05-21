@@ -1,4 +1,4 @@
-import { Button, Modal, Form, Input, DatePicker, message } from "antd";
+import { Button, Modal, Form, Input, DatePicker, message, Select } from "antd";
 import { useState } from "react";
 import { Task } from "../../models/User";
 import { taskApi } from "../../api/taskApi";
@@ -108,13 +108,11 @@ const TaskListEditDetails = ({ task }: TaskListEditDetailsProps) => {
           </Form.Item>
 
           <Form.Item label="Status" name="status">
-            <Input
-              style={{
-                width: "100%",
-                border: "1px solid #d9d9d9",
-                borderRadius: "6px",
-              }}
-            />
+            <Select placeholder="Select status">
+              <Select.Option value="Completed">Completed</Select.Option>
+              <Select.Option value="Ongoing">Ongoing</Select.Option>
+              <Select.Option value="Late">Late</Select.Option>
+            </Select>
           </Form.Item>
           <>
             <div className="flex justify-end gap-2">
