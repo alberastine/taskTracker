@@ -8,7 +8,13 @@ import { UserContext } from "../../context/userContext";
 
 const { Text } = Typography;
 
-const TeamTaskList = ({ team, onTeamUpdated, }: { team: Team, onTeamUpdated: () => void }) => {
+const TeamTaskList = ({
+  team,
+  onTeamUpdated,
+}: {
+  team: Team;
+  onTeamUpdated: () => void;
+}) => {
   const { user: currentUser } = useContext(UserContext);
 
   const handleAssignClick = (task: TeamTask) => {
@@ -27,6 +33,12 @@ const TeamTaskList = ({ team, onTeamUpdated, }: { team: Team, onTeamUpdated: () 
           <Text type="secondary">{record.description || "No description"}</Text>
         </>
       ),
+    },
+    {
+      title: "Date Published",
+      dataIndex: "date_published",
+      key: "date_published",
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
       title: "Deadline",
@@ -48,8 +60,11 @@ const TeamTaskList = ({ team, onTeamUpdated, }: { team: Team, onTeamUpdated: () 
       dataIndex: "assigned_to",
       key: "assigned_to",
       render: (assignedTo: string, record: TeamTask) => {
+        const assignedMember = team.members_lists.find(
+          (member) => member.user_id === assignedTo,
+        );
         if (assignedTo) {
-          return <Text>{assignedTo}</Text>;
+          return <Text>{assignedMember?.username}</Text>;
         } else {
           if (team.leader_id === currentUser?._id) {
             return (
@@ -100,7 +115,9 @@ const TeamTaskList = ({ team, onTeamUpdated, }: { team: Team, onTeamUpdated: () 
           }}
         >
           <Text>Task</Text>
-          {team.leader_id === currentUser?._id ? <TeamAddTask team={team} onTeamUpdated={onTeamUpdated}/> : null}
+          {team.leader_id === currentUser?._id ? (
+            <TeamAddTask team={team} onTeamUpdated={onTeamUpdated} />
+          ) : null}
         </div>
       </Divider>
       {team.tasks.length > 0 ? (

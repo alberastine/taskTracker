@@ -1,10 +1,17 @@
-import { Button, Input, message, Modal, Typography } from "antd";
-
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  Typography,
+  DatePicker,
+} from "antd";
 import { useState } from "react";
-
 import { Team } from "../../models/Team";
 import { addTeamTask } from "../../context/teamContext";
-import { Datepicker } from "flowbite-react";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const TeamAddTask = ({
   team,
@@ -14,72 +21,44 @@ const TeamAddTask = ({
   onTeamUpdated: () => void;
 }) => {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
 
-  const [data, setData] = useState<{
-    task_name: string;
-    assigned_to: string;
-    description: string;
-    date_published: string;
-    deadline: string;
-    status: string;
-  }>({
-    task_name: "",
-    assigned_to: "",
-    date_published: "",
-    description: "",
-    deadline: "",
-    status: "",
-  });
+  const [form] = Form.useForm();
 
   const handleAddTask = async (teamId: string) => {
-    const {
-      task_name,
-      assigned_to,
-      date_published,
-      description,
-      deadline,
-      status,
-    } = data;
-
-    if (!task_name || !description || !deadline) {
-      message.error("Please fill out the required fields");
-      return;
-    }
-    const payload = {
-      task_name,
-      assigned_to,
-      date_published,
-      description,
-      deadline,
-      status,
-    };
     try {
+      const values = await form.validateFields();
+
+      const payload = {
+        ...values,
+        date_published: new Date().toISOString().split("T")[0],
+        deadline: values.deadline.format("YYYY-MM-DD"),
+      };
+
+      setLoading(true);
+      setShowSpinner(true);
+
+      const delay = new Promise((resolve) => setTimeout(resolve, 1500));
+      await delay;
+
       await addTeamTask(teamId, payload);
+      message.success("Task added successfully");
+      form.resetFields();
       setIsAddTaskModalOpen(false);
-      setData({
-        task_name: "",
-        assigned_to: "",
-        date_published: "",
-        description: "",
-        deadline: "",
-        status: "Not Started",
-      });
       onTeamUpdated?.();
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log("Validation failed or API error:", error);
+      message.error("Please fill out all required fields correctly");
+    } finally {
+      setLoading(false);
+      setShowSpinner(false);
     }
   };
 
   const handleCancel = () => {
     setIsAddTaskModalOpen(false);
-    setData({
-      task_name: "",
-      assigned_to: "",
-      date_published: "",
-      description: "",
-      deadline: "",
-      status: "",
-    });
+    form.resetFields();
   };
 
   return (
@@ -95,74 +74,98 @@ const TeamAddTask = ({
       >
         + Add Task
       </Button>
+
       <Modal
         open={isAddTaskModalOpen}
         onCancel={handleCancel}
         footer={
           <div className="flex justify-end">
             <Button
-              className="team-options w-full"
+              type="primary"
+              onClick={() => handleAddTask(team._id)}
               style={{
                 backgroundColor: "rgb(14 116 144)",
-                color: "white",
                 border: "none",
               }}
-              onClick={() => handleAddTask(team._id)}
+              disabled={loading}
             >
-              Add Task
+              Add Task  {showSpinner && <LoadingOutlined />}
             </Button>
           </div>
         }
       >
         <Typography.Title level={4}>Add Task</Typography.Title>
-        <Input
-          placeholder="Task Name"
-          value={data.task_name}
-          onChange={(e) => setData({ ...data, task_name: e.target.value })}
-          style={{ marginBottom: 8 }}
-        />
-        <Input
-          placeholder="Assigned To"
-          value={data.assigned_to}
-          onChange={(e) =>
-            setData((prev) => ({ ...prev, assigned_to: e.target.value }))
-          }
-          style={{ marginBottom: 8 }}
-        />
-        <Input.TextArea
-          placeholder="Description"
-          value={data.description}
-          onChange={(e) => setData({ ...data, description: e.target.value })}
-          rows={3}
-          style={{ marginBottom: 8 }}
-        />
-        <Datepicker
-          placeholder="Start Date (YYYY-MM-DD)"
-          value={data.date_published}
-          onSelectedDateChanged={(date) =>
-            setData({
-              ...data,
-              date_published: date.toLocaleDateString("en-CA"),
-            })
-          }
-          style={{ marginBottom: 8 }}
-        />
-        <Datepicker
-          placeholder="Deadline (YYYY-MM-DD)"
-          value={data.deadline}
-          onSelectedDateChanged={(date) =>
-            setData({
-              ...data,
-              deadline: date.toLocaleDateString("en-CA"),
-            })
-          }
-          style={{ marginBottom: 8 }}
-        />
-        <Input
-          placeholder="Status"
-          value={data.status}
-          onChange={(e) => setData({ ...data, status: e.target.value })}
-        />
+        <Form
+          layout="vertical"
+          form={form}
+          initialValues={{
+            task_name: "",
+            assigned_to: "",
+            description: "",
+            deadline: null,
+            status: "",
+          }}
+        >
+          <Form.Item
+            name="task_name"
+            label="Task Name"
+            rules={[{ required: true, message: "Task name is required" }]}
+          >
+            <Input
+              style={{
+                width: "100%",
+                border: "1px solid #d9d9d9",
+                borderRadius: "6px",
+                height: "40px",
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item name="assigned_to" label="Assigned To">
+            <Select
+              options={team.members_lists.map((member) => ({
+                label: member.username,
+                value: member.user_id,
+              }))}
+              style={{
+                height: "40px",
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: true, message: "Description is required" }]}
+          >
+            <Input.TextArea
+              rows={3}
+              allowClear
+              style={{
+                height: "40px",
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="deadline"
+            label="Deadline"
+            rules={[{ required: true, message: "Deadline is required" }]}
+          >
+            <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
+          </Form.Item>
+
+          <Form.Item name="status" label="Status">
+            <Input
+              style={{
+                width: "100%",
+                border: "1px solid #d9d9d9",
+                borderRadius: "6px",
+                height: "40px",
+              }}
+            />
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );
