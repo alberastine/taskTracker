@@ -55,15 +55,11 @@ const TeamPage = ({
     Promise.all([fetchAllUsers(), fetchTeams()]).catch((err) =>
       console.error("Failed to initialize data:", err),
     );
-  }, [fetchTeams, fetchAllUsers]);
-
-  useEffect(() => {
     const savedColors = localStorage.getItem("teamColors");
     if (savedColors) {
       setTeamColors(JSON.parse(savedColors));
     }
-  }, []);
-
+  }, [fetchTeams, fetchAllUsers]);
   useEffect(() => {
     localStorage.setItem("teamColors", JSON.stringify(teamColors));
   }, [teamColors]);
