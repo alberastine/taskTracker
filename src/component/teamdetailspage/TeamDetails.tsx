@@ -23,7 +23,8 @@ const TeamDetailsPage = ({
 }) => {
   const [team, setTeam] = useState<Team | null>(null);
   const { user: currentUser } = useContext(UserContext);
-  const [activeComponent, setActiveComponent] = useState<ComponentKey>("one");
+  const [activeComponent, setActiveComponentState] =
+    useState<ComponentKey>("one");
 
   const fetchTeamDetails = useCallback(async () => {
     try {
@@ -37,9 +38,35 @@ const TeamDetailsPage = ({
 
   useEffect(() => {
     if (teamId) {
+      setActiveComponentState("one");
       fetchTeamDetails();
+    } else {
+      setTeam(null);
     }
   }, [teamId, fetchTeamDetails]);
+
+  useEffect(() => {
+    if (teamId) {
+      const savedComponent = localStorage.getItem(
+        `teamDetailsActiveComponent_${teamId}`,
+      );
+      if (
+        savedComponent === "one" ||
+        savedComponent === "two" ||
+        savedComponent === "three" ||
+        savedComponent === "four"
+      ) {
+        setActiveComponentState(savedComponent);
+      }
+    }
+  }, [teamId]);
+
+  const setActiveComponent = (key: ComponentKey) => {
+    setActiveComponentState(key);
+    if (teamId && key) {
+      localStorage.setItem(`teamDetailsActiveComponent_${teamId}`, key);
+    }
+  };
 
   if (!team) {
     return <Card style={{ margin: "2rem" }}>Loading or team not found...</Card>;
@@ -51,7 +78,7 @@ const TeamDetailsPage = ({
       case "one":
         return <TeamMembers team={team} onTeamUpdated={fetchTeamDetails} />;
       case "two":
-        return <TeamTaskList team={team} onTeamUpdated={fetchTeamDetails}/>;
+        return <TeamTaskList team={team} onTeamUpdated={fetchTeamDetails} />;
       case "three":
         return <TeamInviteUser team={team} />;
       case "four":

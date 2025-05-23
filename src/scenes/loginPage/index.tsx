@@ -35,7 +35,8 @@ const LoginPage = () => {
         setData({ gmail: "", password: "" });
         setError("");
         toast("User login successfully");
-        navigate("/home");
+        sessionStorage.removeItem("homeActiveWidget");
+        navigate("/home", { state: { resetHomeWidget: true } });
       }
     } catch (error) {
       setError("Email or password is incorrect");
