@@ -60,6 +60,7 @@ const TeamPage = ({
       setTeamColors(JSON.parse(savedColors));
     }
   }, [fetchTeams, fetchAllUsers]);
+
   useEffect(() => {
     localStorage.setItem("teamColors", JSON.stringify(teamColors));
   }, [teamColors]);
