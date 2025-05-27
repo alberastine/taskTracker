@@ -26,11 +26,9 @@ const TeamTaskList = ({
       title: "Task Name",
       dataIndex: "task_name",
       key: "task_name",
-      render: (text: string, record: TeamTask) => (
+      render: (text: string) => (
         <>
           <Text strong>{text}</Text>
-          <br />
-          <Text type="secondary">{record.description || "No description"}</Text>
         </>
       ),
     },
@@ -121,7 +119,21 @@ const TeamTaskList = ({
         </div>
       </Divider>
       {team.tasks.length > 0 ? (
-        <Table columns={taskColumns} dataSource={taskData} pagination={false} />
+        <Table
+          columns={taskColumns}
+          dataSource={taskData}
+          pagination={false}
+          scroll={{ y: 270 }}
+          expandable={{
+            expandedRowRender: (record: TeamTask) => (
+              <p style={{ margin: 0, marginLeft: "3rem" }}>
+                <strong>Description:</strong>{" "}
+                {record.description || "No description"}
+              </p>
+            ),
+            rowExpandable: (record: TeamTask) => !!record.description,
+          }}
+        />
       ) : (
         <Empty description="No tasks" />
       )}
