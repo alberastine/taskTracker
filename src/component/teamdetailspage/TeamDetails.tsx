@@ -82,7 +82,13 @@ const TeamDetailsPage = ({
       case "three":
         return <TeamInviteUser team={team} />;
       case "four":
-        return <TeamJoinRequest team={team} />;
+        return (
+          <TeamJoinRequest
+            team={team}
+            onTeamUpdated={fetchTeamDetails}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       default:
         return null;
     }
@@ -154,6 +160,7 @@ const TeamDetailsPage = ({
                 <LeaveTeam
                   selectedTeamId={team._id}
                   onTeamLeaved={fetchTeamDetails}
+                  setActiveWidget={setActiveWidget}
                 />
               )}
             </Col>

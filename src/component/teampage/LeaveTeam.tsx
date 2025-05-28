@@ -6,9 +6,11 @@ import { useState } from "react";
 const LeaveTeam = ({
   selectedTeamId,
   onTeamLeaved,
+  setActiveWidget,
 }: {
   selectedTeamId: string;
   onTeamLeaved: () => void;
+  setActiveWidget: (key: number) => void;
 }) => {
   const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
@@ -28,6 +30,7 @@ const LeaveTeam = ({
       await leaveTeam(selectedTeam);
       onTeamLeaved();
       setIsLeaveModalOpen(false);
+      setActiveWidget(3);
       message.success("Team left successfully");
     } catch (err) {
       console.error("Failed to delete team:", err);

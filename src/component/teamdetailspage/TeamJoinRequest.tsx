@@ -1,10 +1,54 @@
-import { Button, Divider, Empty, List, Typography } from "antd";
+import { Button, Divider, Empty, List, message, Typography } from "antd";
 
 import { Team } from "../../models/Team";
+import { respondToJoinRequest } from "../../context/teamContext";
+import { useState } from "react";
+import { Spinner } from "flowbite-react";
 
 const { Text } = Typography;
+type ComponentKey = "one" | "two" | "three" | "four" | null;
 
-const TeamJoinRequest = ({ team }: { team: Team }) => {
+const TeamJoinRequest = ({
+  team,
+  onTeamUpdated,
+  setActiveComponent,
+}: {
+  team: Team;
+  onTeamUpdated: () => void;
+  setActiveComponent: (key: ComponentKey) => void;
+}) => {
+  const [loadingAction, setLoadingAction] = useState<{
+    teamId: string;
+    userId: string;
+    action: "accept" | "decline";
+  } | null>(null);
+
+  const handleResponse = async (
+    teamId: string,
+    userId: string,
+    accept: boolean,
+  ) => {
+    setLoadingAction({ teamId, userId, action: accept ? "accept" : "decline" });
+
+    const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      await delay;
+      await respondToJoinRequest(teamId, userId, accept);
+      if (accept) {
+        message.success("Join request response sent successfully");
+        await delay;
+        setActiveComponent("one");
+      } else {
+        message.success("Join request declined successfully");
+      }
+      onTeamUpdated?.();
+    } catch (error) {
+      console.error("Error responding to join request", error);
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
   return (
     <div>
       <Divider orientation="left">Join Requests</Divider>
@@ -35,30 +79,36 @@ const TeamJoinRequest = ({ team }: { team: Team }) => {
                 }}
               >
                 <Button
+                  disabled={!!loadingAction}
                   style={{
                     backgroundColor: "rgb(14 116 144)",
                     color: "white",
                     border: "none",
                   }}
-                  // onClick={() =>
-                  //   selectedTeam &&
-                  //   handleTeamRequest("accept", selectedTeam, user._id)
-                  // }
+                  onClick={() => handleResponse(team._id, user.user_id, true)}
                 >
                   Accept
+                  {loadingAction?.teamId === team._id &&
+                    loadingAction.userId === user.user_id &&
+                    loadingAction.action === "accept" && (
+                      <Spinner size="sm" className="ml-2" />
+                    )}
                 </Button>
                 <Button
+                  disabled={!!loadingAction}
                   style={{
                     backgroundColor: "rgb(220, 20, 60)",
                     color: "white",
                     border: "none",
                   }}
-                  // onClick={() =>
-                  //   selectedTeam &&
-                  //   handleTeamRequest("reject", selectedTeam, user._id)
-                  // }
+                  onClick={() => handleResponse(team._id, user.user_id, false)}
                 >
-                  Reject
+                  Decline
+                  {loadingAction?.teamId === team._id &&
+                    loadingAction.userId === user.user_id &&
+                    loadingAction.action === "decline" && (
+                      <Spinner size="sm" className="ml-2" />
+                    )}
                 </Button>
               </div>
             </List.Item>

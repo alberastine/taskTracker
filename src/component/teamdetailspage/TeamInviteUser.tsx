@@ -12,7 +12,6 @@ const TeamInviteUser = ({ team }: { team: Team }) => {
         <List
           bordered
           dataSource={team.invited_users}
-          style={{ height: "56px", alignContent: "center" }}
           renderItem={(user) => (
             <List.Item
               style={{ display: "flex", justifyContent: "space-between" }}
