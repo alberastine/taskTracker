@@ -3,7 +3,7 @@ import { Button, Divider, Empty, List, message, Typography } from "antd";
 import { Team } from "../../models/Team";
 import { respondToJoinRequest } from "../../context/teamContext";
 import { useState } from "react";
-import { Spinner } from "flowbite-react";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 type ComponentKey = "one" | "two" | "three" | "four" | null;
@@ -90,9 +90,7 @@ const TeamJoinRequest = ({
                   Accept
                   {loadingAction?.teamId === team._id &&
                     loadingAction.userId === user.user_id &&
-                    loadingAction.action === "accept" && (
-                      <Spinner size="sm" className="ml-2" />
-                    )}
+                    loadingAction.action === "accept" && <LoadingOutlined />}
                 </Button>
                 <Button
                   disabled={!!loadingAction}
@@ -106,9 +104,7 @@ const TeamJoinRequest = ({
                   Decline
                   {loadingAction?.teamId === team._id &&
                     loadingAction.userId === user.user_id &&
-                    loadingAction.action === "decline" && (
-                      <Spinner size="sm" className="ml-2" />
-                    )}
+                    loadingAction.action === "decline" && <LoadingOutlined />}
                 </Button>
               </div>
             </List.Item>

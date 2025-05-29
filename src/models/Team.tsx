@@ -16,6 +16,7 @@ export interface MembersList {
 }
 
 export interface TeamTask {
+  _id: string;
   task_name: string;
   assigned_to: string;
   description: string;

@@ -89,7 +89,7 @@ const TeamAddTask = ({
               }}
               disabled={loading}
             >
-              Add Task  {showSpinner && <LoadingOutlined />}
+              Add Task {showSpinner && <LoadingOutlined />}
             </Button>
           </div>
         }

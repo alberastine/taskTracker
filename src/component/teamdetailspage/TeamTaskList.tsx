@@ -5,6 +5,7 @@ import { TeamTask } from "../../models/Team";
 import TeamAddTask from "./TeamAddTask";
 import { useContext } from "react";
 import { UserContext } from "../../context/userContext";
+import TeamAssignUserTask from "./TeamAssignUserTask";
 
 const { Text } = Typography;
 
@@ -66,16 +67,11 @@ const TeamTaskList = ({
         } else {
           if (team.leader_id === currentUser?._id) {
             return (
-              <Button
-                style={{
-                  backgroundColor: "rgb(14 116 144)",
-                  color: "white",
-                  border: "none",
-                }}
-                onClick={() => handleAssignClick(record)}
-              >
-                Assign To
-              </Button>
+              <TeamAssignUserTask
+                team={team}
+                taskId={record._id}
+                onTeamUpdated={onTeamUpdated}
+              />
             );
           } else {
             return (
