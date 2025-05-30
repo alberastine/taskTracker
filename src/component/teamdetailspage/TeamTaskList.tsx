@@ -1,4 +1,4 @@
-import { Button, Divider, Empty, Table, Tag, Typography } from "antd";
+import { Button, Divider, Empty, message, Table, Tag, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
 
 import { Team } from "../../models/Team";
@@ -99,6 +99,20 @@ const TeamTaskList = ({
     },
   ];
 
+  const canEditTask = (task: TeamTask): boolean => {
+    const isLeader = team.leader_id === currentUser?._id;
+    const isAssignedToUser = task.assigned_to === currentUser?._id;
+    return isLeader || isAssignedToUser;
+  };
+
+  const getEditMessage = (task: TeamTask): string | null => {
+    if (!task.assigned_to)
+      return "This task is unassigned. Please claim it to make edits.";
+    if (task.assigned_to !== currentUser?._id)
+      return "You are not assigned to this task and do not have permission to edit it.";
+    return null;
+  };
+
   return (
     <div>
       <Divider orientation="left">
@@ -132,9 +146,14 @@ const TeamTaskList = ({
           onRow={(record) => ({
             style: { cursor: "pointer" },
             onClick: () => {
-              setSelectedTaskId(record._id);
-              setSelectedTask(record);
-              setIsEditModalVisible(true);
+              if (canEditTask(record)) {
+                setSelectedTaskId(record._id);
+                setSelectedTask(record);
+                setIsEditModalVisible(true);
+              } else {
+                const messageText = getEditMessage(record);
+                if (messageText) message.warning(messageText);
+              }
             },
           })}
           expandable={{
