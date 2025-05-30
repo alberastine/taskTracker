@@ -3,7 +3,7 @@ import { ColumnsType } from "antd/es/table";
 import { Team, TeamTask } from "../../models/Team";
 import { useContext, useMemo, useState } from "react";
 import { UserContext } from "../../context/userContext";
-import TeamAssignUserTask from "./TeamAssignUserTask";
+// import TeamAssignUserTask from "./TeamAssignUserTask";
 import TeamAddTask from "./TeamAddTask";
 import TeamEditTask from "./TeamEditTask";
 
@@ -35,21 +35,17 @@ const TeamTaskList = ({
     return null;
   };
 
-  const renderAssignedTo = (assignedTo: string, task: TeamTask) => {
+  const renderAssignedTo = (assignedTo: string) => {
     const assignedMember = team.members_lists.find(
       (member) => member.user_id === assignedTo,
     );
 
     if (assignedTo) {
-      return <Text>{assignedMember?.username || "Unknown User"}</Text>;
+      return <Text>{assignedMember?.username}</Text>;
     }
 
-    return isLeader ? (
-      <TeamAssignUserTask
-        team={team}
-        taskId={task._id}
-        onTeamUpdated={onTeamUpdated}
-      />
+    return assignedMember === undefined ? (
+      <Tag color="red">Not assigned</Tag>
     ) : (
       <Button
         style={{
@@ -151,7 +147,7 @@ const TeamTaskList = ({
           })}
           expandable={{
             expandedRowRender: (record: TeamTask) => (
-              <p  style={{ margin: 0, marginLeft: "3rem" }}>
+              <p style={{ margin: 0, marginLeft: "3rem" }}>
                 <strong>Description:</strong>{" "}
                 {record.description || "No description"}
               </p>

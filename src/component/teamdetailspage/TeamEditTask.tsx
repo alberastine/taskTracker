@@ -1,5 +1,15 @@
 import { Team, TeamTask } from "../../models/Team";
-import { Button, Form, Input, Modal, Select, Typography } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Typography,
+} from "antd";
+
+import dayjs from "dayjs";
 
 const TeamEditTask = ({
   visible,
@@ -74,8 +84,8 @@ const TeamEditTask = ({
           layout="vertical"
           initialValues={{
             task_name: task?.task_name,
-            dateStarted: task?.date_published,
-            deadline: task?.deadline,
+            description: task?.description,
+            deadline: dayjs(task?.deadline),
             status: task?.status,
             assigned_to: assignedMember?.username,
           }}
@@ -90,8 +100,8 @@ const TeamEditTask = ({
               }}
             />
           </Form.Item>
-          <Form.Item name="dateStarted" label="Date Started">
-            <Input
+          <Form.Item name="description" label="Description">
+            <Input.TextArea
               style={{
                 width: "100%",
                 border: "1px solid #d9d9d9",
@@ -100,8 +110,9 @@ const TeamEditTask = ({
               }}
             />
           </Form.Item>
+
           <Form.Item name="deadline" label="Deadline">
-            <Input
+            <DatePicker
               style={{
                 width: "100%",
                 border: "1px solid #d9d9d9",
