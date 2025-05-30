@@ -1,11 +1,14 @@
 import { Button, Divider, Empty, Table, Tag, Typography } from "antd";
+import { ColumnsType } from "antd/es/table";
 
 import { Team } from "../../models/Team";
 import { TeamTask } from "../../models/Team";
-import TeamAddTask from "./TeamAddTask";
-import { useContext } from "react";
+
+import { useContext, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import TeamAssignUserTask from "./TeamAssignUserTask";
+import TeamAddTask from "./TeamAddTask";
+import TeamEditTask from "./TeamEditTask";
 
 const { Text } = Typography;
 
@@ -16,13 +19,17 @@ const TeamTaskList = ({
   team: Team;
   onTeamUpdated: () => void;
 }) => {
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [selectedTask, setSelectedTask] = useState<TeamTask | null>(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
   const { user: currentUser } = useContext(UserContext);
 
   const handleAssignClick = (task: TeamTask) => {
-    console.log("Assign clicked for task", task);
+    console.log("Assign clicked for task", task._id);
   };
 
-  const taskColumns = [
+  const taskColumns: ColumnsType<TeamTask> = [
     {
       title: "Task Name",
       dataIndex: "task_name",
@@ -92,11 +99,6 @@ const TeamTaskList = ({
     },
   ];
 
-  const taskData = team.tasks.map((task, index) => ({
-    key: index,
-    ...task,
-  }));
-
   return (
     <div>
       <Divider orientation="left">
@@ -117,9 +119,24 @@ const TeamTaskList = ({
       {team.tasks.length > 0 ? (
         <Table
           columns={taskColumns}
-          dataSource={taskData}
+          dataSource={team.tasks.map((task) => ({
+            ...task,
+            key: task._id,
+          }))}
           pagination={false}
+          rowKey={(record) => record._id}
           scroll={{ y: 270 }}
+          rowClassName={(record) =>
+            record._id === selectedTaskId ? "selected-row" : ""
+          }
+          onRow={(record) => ({
+            style: { cursor: "pointer" },
+            onClick: () => {
+              setSelectedTaskId(record._id);
+              setSelectedTask(record);
+              setIsEditModalVisible(true);
+            },
+          })}
           expandable={{
             expandedRowRender: (record: TeamTask) => (
               <p style={{ margin: 0, marginLeft: "3rem" }}>
@@ -132,6 +149,18 @@ const TeamTaskList = ({
         />
       ) : (
         <Empty description="No tasks" />
+      )}
+      {selectedTask && (
+        <TeamEditTask
+          visible={isEditModalVisible}
+          task={selectedTask}
+          team={team}
+          onTeamUpdated={onTeamUpdated}
+          onClose={() => {
+            setIsEditModalVisible(false);
+            setSelectedTask(null);
+          }}
+        />
       )}
     </div>
   );

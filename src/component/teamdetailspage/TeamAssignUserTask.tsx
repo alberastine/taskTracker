@@ -56,7 +56,6 @@ const TeamAssignUserTask = ({
         }}
         onClick={() => {
           setIsAssignUserTaskModalOpen(true);
-          console.log(taskId);
         }}
       >
         Assign To
@@ -88,15 +87,15 @@ const TeamAssignUserTask = ({
         >
           <Form.Item name="assigned_to">
             <Select
-              options={team.members_lists.map((member) => ({
-                label: member.username,
-                value: member.user_id,
-              }))}
-              style={{
-                height: "40px",
-              }}
               placeholder="Choose a team member"
-            />
+              style={{ height: "40px" }}
+            >
+              {team.members_lists.map((member) => (
+                <Select.Option key={member.user_id} value={member.user_id}>
+                  {member.username}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
         </Form>
       </Modal>

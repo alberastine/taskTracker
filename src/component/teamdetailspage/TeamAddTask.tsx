@@ -103,7 +103,7 @@ const TeamAddTask = ({
             assigned_to: "",
             description: "",
             deadline: null,
-            status: "",
+            status: "No Started",
           }}
         >
           <Form.Item
