@@ -84,3 +84,29 @@ export const deleteTeam = async (team_id: string) => {
   });
   return response.data;
 };
+
+export const updateTeamTask = async (
+  team_id: string,
+  task_id: string,
+  task: {
+    task_name?: string;
+    description?: string;
+    deadline?: string;
+    status?: string;
+    assigned_to?: string;
+  },
+) => {
+  const response = await axios.put("/updateTeamTask", {
+    team_id,
+    task_id,
+    ...task,
+  });
+  return response.data;
+};
+
+export const deleteTeamTask = async (team_id: string, task_id: string) => {
+  const response = await axios.delete("/deleteTeamTask", {
+    data: { team_id, task_id },
+  });
+  return response.data;
+};

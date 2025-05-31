@@ -26,7 +26,7 @@ const TeamAddTask = ({
 
   const [form] = Form.useForm();
 
-  const handleAddTask = async (teamId: string) => {
+  const handleAddTask = async () => {
     try {
       const values = await form.validateFields();
 
@@ -42,7 +42,7 @@ const TeamAddTask = ({
       const delay = new Promise((resolve) => setTimeout(resolve, 1500));
       await delay;
 
-      await addTeamTask(teamId, payload);
+      await addTeamTask(team._id, payload);
       message.success("Task added successfully");
       form.resetFields();
       setIsAddTaskModalOpen(false);
@@ -82,11 +82,11 @@ const TeamAddTask = ({
           <div className="flex justify-end">
             <Button
               type="primary"
-              onClick={() => handleAddTask(team._id)}
               style={{
                 backgroundColor: "rgb(14 116 144)",
                 border: "none",
               }}
+              onClick={handleAddTask}
               disabled={loading}
             >
               Add Task {showSpinner && <LoadingOutlined />}

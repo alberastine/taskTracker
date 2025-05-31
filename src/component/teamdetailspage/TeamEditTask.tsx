@@ -1,15 +1,19 @@
+import { useState } from "react";
+import { deleteTeamTask, updateTeamTask } from "../../context/teamContext";
 import { Team, TeamTask } from "../../models/Team";
 import {
   Button,
   DatePicker,
   Form,
   Input,
+  message,
   Modal,
   Select,
   Typography,
 } from "antd";
 
 import dayjs from "dayjs";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const TeamEditTask = ({
   visible,
@@ -24,6 +28,10 @@ const TeamEditTask = ({
   onTeamUpdated: () => void;
   onClose: () => void;
 }) => {
+  const [loading, setLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const [form] = Form.useForm();
 
   const assignedMember = team.members_lists.find(
@@ -31,7 +39,69 @@ const TeamEditTask = ({
   );
 
   const handleEditTask = async () => {
-    onTeamUpdated?.();
+    try {
+      const values = await form.validateFields();
+
+      setLoading(true);
+      setShowSpinner(true);
+
+      const delay = new Promise((resolve) => setTimeout(resolve, 1500));
+      await delay;
+
+      await updateTeamTask(team._id, task?._id || "", {
+        task_name: values.task_name,
+        description: values.description,
+        deadline: values.deadline?.toISOString(),
+        status: values.status,
+        assigned_to: values.assigned_to,
+      });
+
+      message.success("Task updated successfully!");
+      onTeamUpdated?.();
+      onClose();
+    } catch (err) {
+      console.error("Update error:", err);
+      message.error("Failed to update task");
+    } finally {
+      setLoading(false);
+      setShowSpinner(false);
+    }
+  };
+
+  const handleDeleteTask = () => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this task?",
+      content: "This action cannot be undone.",
+      okText: "Yes, Delete",
+      cancelText: "Cancel",
+      okButtonProps: {
+        disabled: deleting,
+        danger: true,
+      },
+      async onOk() {
+        try {
+          setDeleting(true);
+
+          const delay = new Promise((resolve) => setTimeout(resolve, 1500));
+          await delay;
+
+          await deleteTeamTask(team._id, task?._id || "");
+          message.success("Task deleted successfully.");
+
+          onTeamUpdated?.();
+          onClose();
+        } catch (error) {
+          console.error("Delete error:", error);
+          message.error("Failed to delete task.");
+          throw error;
+        } finally {
+          setDeleting(false);
+        }
+      },
+      onCancel() {
+        setDeleting(false);
+      },
+    });
   };
 
   return (
@@ -48,6 +118,7 @@ const TeamEditTask = ({
                   backgroundColor: "rgb(220, 20, 60)",
                   border: "none",
                 }}
+                onClick={handleDeleteTask}
               >
                 Delete Task
               </Button>
@@ -70,8 +141,9 @@ const TeamEditTask = ({
                   border: "none",
                 }}
                 onClick={handleEditTask}
+                disabled={loading}
               >
-                Save
+                Save {showSpinner && <LoadingOutlined />}
               </Button>
             </div>
           </div>
@@ -87,7 +159,7 @@ const TeamEditTask = ({
             description: task?.description,
             deadline: dayjs(task?.deadline),
             status: task?.status,
-            assigned_to: assignedMember?.username,
+            assigned_to: assignedMember?.user_id,
           }}
         >
           <Form.Item name="task_name" label="Task Name">
