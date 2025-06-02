@@ -1,6 +1,6 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { updateAssignTo } from "../../context/teamContext";
-import { Team } from "../../models/Team";
+import { updateAssignTo } from "@/context/teamContext";
+import { Team } from "@/models/Team";
 import { Button, Modal, Typography, Form, Select, message } from "antd";
 import { useState } from "react";
 

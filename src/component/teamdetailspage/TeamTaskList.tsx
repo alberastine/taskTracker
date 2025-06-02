@@ -1,8 +1,8 @@
 import { Button, Divider, Empty, message, Table, Tag, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { Team, TeamTask } from "../../models/Team";
+import { Team, TeamTask } from "@/models/Team";
 import { useContext, useMemo, useState } from "react";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "@/context/userContext";
 // import TeamAssignUserTask from "./TeamAssignUserTask";
 import TeamAddTask from "./TeamAddTask";
 import TeamEditTask from "./TeamEditTask";
@@ -44,7 +44,7 @@ const TeamTaskList = ({
       return <Text>{assignedMember?.username}</Text>;
     }
 
-    return assignedMember === undefined ? (
+    return assignedMember && isLeader === undefined ? (
       <Tag color="red">Not assigned</Tag>
     ) : (
       <Button

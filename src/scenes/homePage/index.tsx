@@ -1,11 +1,11 @@
 import SibeBar from "../sideBar";
 import NavBar from "../navBar";
-import TaskList from "../../component/taskpage/TaskList";
-import Calendar from "../../component/Calendar";
-import TeamPage from "../../component/teampage/Team";
-import TeamDetailsPage from "../../component/teamdetailspage/TeamDetails";
-import UserProfile from "../../component/userpage/UserProfile";
-import Notification from "../../component/notificationspage/Notification";
+import TaskList from "@/component/taskpage/TaskList";
+import Calendar from "@/component/Calendar";
+import TeamPage from "@/component/teampage/Team";
+import TeamDetailsPage from "@/component/teamdetailspage/TeamDetails";
+import UserProfile from "@/component/userpage/UserProfile";
+import Notification from "@/component/notificationspage/Notification";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 

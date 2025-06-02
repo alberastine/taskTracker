@@ -1,12 +1,12 @@
 import { Button, Label, TextInput, Checkbox, Alert } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "@/context/userContext";
 import { useState, useContext } from "react";
 
 import toast from "react-hot-toast";
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
-import "../../styles/scenes/login.css";
+import "@/styles/scenes/login.css";
 
 const LoginPage = () => {
   const { fetchUser } = useContext(UserContext);

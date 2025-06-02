@@ -1,15 +1,15 @@
 import { Checkbox, Table } from "flowbite-react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../context/userContext";
-import { Task } from "../../models/User";
-import { taskApi } from "../../api/taskApi";
+import { UserContext } from "@/context/userContext";
+import { Task } from "@/models/User";
+import { taskApi } from "@/api/taskApi";
 import { Button, Empty, message, Modal, Tag } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
 import AddTask from "./AddTask";
 import TaskListEditDetails from "../taskpage/TaskListEditDetails";
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
 const TaskList = () => {
   const [tasks, setTasks] = useState<Task[]>([]);

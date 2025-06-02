@@ -1,11 +1,11 @@
 import { Button, Modal, Typography } from "antd";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { getUserTeams, sendTeamInvitation } from "../../context/teamContext";
-import { UserContext } from "../../context/userContext";
-import { User } from "../../models/User";
-import { Team } from "../../models/Team";
+import { getUserTeams, sendTeamInvitation } from "@/context/teamContext";
+import { UserContext } from "@/context/userContext";
+import { User } from "@/models/User";
+import { Team } from "@/models/Team";
 
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
 const InviteUser = ({ selectedTeamId, onTeamUpdated, }: { selectedTeamId: string, onTeamUpdated?: () => void; }) => {
   const [allUsers, setAllUsers] = useState<User[]>([]);

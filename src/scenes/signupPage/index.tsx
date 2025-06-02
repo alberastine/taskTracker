@@ -4,9 +4,9 @@ import { useState } from "react";
 import { AxiosError } from "axios";
 import { Link } from "react-router-dom";
 
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
-import "../../styles/scenes/login.css";
+import "@/styles/scenes/login.css";
 
 const SignUpPage = () => {
   const navigate = useNavigate();

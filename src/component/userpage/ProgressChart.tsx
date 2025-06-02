@@ -1,9 +1,9 @@
 import { Card } from "flowbite-react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { useCallback, useContext, useEffect } from "react";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "@/context/userContext";
 
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
 type TaskStatus = "Completed" | "Ongoing" | "Late";
 

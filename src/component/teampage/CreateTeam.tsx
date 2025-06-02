@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Modal, Input, Form, message } from "antd";
-import { createTeam } from "../../context/teamContext";
+import { createTeam } from "@/context/teamContext";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const CreateTeam = ({ onTeamCreated }: { onTeamCreated: () => void }) => {

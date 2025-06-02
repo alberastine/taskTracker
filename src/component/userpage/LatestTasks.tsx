@@ -1,7 +1,7 @@
 import { Card } from "flowbite-react";
 import { useCallback, useContext, useEffect } from "react";
-import { UserContext } from "../../context/userContext";
-import axios from "../../api/axios";
+import { UserContext } from "@/context/userContext";
+import axios from "@/api/axios";
 
 const LatestTasks = ({
   setActiveWidget,

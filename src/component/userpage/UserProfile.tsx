@@ -1,18 +1,18 @@
 import { Form, Button, message, Input } from "antd";
 import { useContext, useState, useEffect, useCallback } from "react";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "@/context/userContext";
 import { LoadingOutlined } from "@ant-design/icons";
 import { AxiosError } from "axios";
-import { userApi } from "../../api/userApi";
+import { userApi } from "@/api/userApi";
 
 import ProgressChart from "./ProgressChart";
 import LatestTasks from "./LatestTasks";
 import WidgetWrapper from "../WidgetWrapper";
 import EditCoverPhoto from "./EditCoverPhoto";
 import EditProfilePhoto from "./EditProfilePhoto";
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
-import "../../styles/components/UserProfile.css";
+import "@/styles/components/UserProfile.css";
   
 interface UpdateUserData {
   username?: string;

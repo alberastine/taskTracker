@@ -8,9 +8,9 @@ import {
 } from "flowbite-react";
 import { message } from "antd";
 import { useState, useContext } from "react";
-import { UserContext } from "../../context/userContext";
-import axios from "../../api/axios";
-import "../../styles/components/AddTask.css";
+import { UserContext } from "@/context/userContext";
+import axios from "@/api/axios";
+import "@/styles/components/AddTask.css";
 
 const AddTask = () => {
   const { fetchUser } = useContext(UserContext);

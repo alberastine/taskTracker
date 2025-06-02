@@ -1,7 +1,7 @@
 import { Button, Divider, Empty, List, message, Typography } from "antd";
 
-import { Team } from "../../models/Team";
-import { respondToJoinRequest } from "../../context/teamContext";
+import { Team } from "@/models/Team";
+import { respondToJoinRequest } from "@/context/teamContext";
 import { useState } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
 

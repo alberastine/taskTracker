@@ -7,7 +7,7 @@ import {
 } from "react-icons/hi";
 import { FaRegCalendar } from "react-icons/fa";
 
-import "../../styles/scenes/sideBar.css";
+import "@/styles/scenes/sideBar.css";
 
 const SibeBar = ({
   setActiveWidget,

@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { leaveTeam } from "../../context/teamContext";
+import { leaveTeam } from "@/context/teamContext";
 import { Button, Typography, Modal, message } from "antd";
 import { useState } from "react";
 

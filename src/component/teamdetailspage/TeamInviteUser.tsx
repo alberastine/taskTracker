@@ -1,6 +1,6 @@
 import { Divider, Empty, List, Typography } from "antd";
 
-import { Team } from "../../models/Team";
+import { Team } from "@/models/Team";
 
 const { Text } = Typography;
 

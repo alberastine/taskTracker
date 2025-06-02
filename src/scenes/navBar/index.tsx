@@ -1,11 +1,11 @@
 import { Button, DarkThemeToggle, Navbar } from "flowbite-react";
 
 import { useContext } from "react";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "@/context/userContext";
 import { useNavigate } from "react-router-dom";
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
-import "../../styles/scenes/navBar.css";
+import "@/styles/scenes/navBar.css";
 
 const NavBar = () => {
   const navigate = useNavigate();

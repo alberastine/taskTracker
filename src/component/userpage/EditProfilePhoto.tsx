@@ -2,10 +2,10 @@ import { CameraOutlined } from "@ant-design/icons";
 import { Modal, Button, message } from "antd";
 import { useRef, useState } from "react";
 import { useCallback, useContext, useEffect } from "react";
-import { UserContext } from "../../context/userContext";
-import { userApi } from "../../api/userApi";
+import { UserContext } from "@/context/userContext";
+import { userApi } from "@/api/userApi";
 
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
 const EditProfilePhoto = () => {
   const [isModalOpenProfilePic, setIsModalOpenProfilePic] = useState(false);

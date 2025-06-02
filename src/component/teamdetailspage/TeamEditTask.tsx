@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { deleteTeamTask, updateTeamTask } from "../../context/teamContext";
-import { Team, TeamTask } from "../../models/Team";
+import { deleteTeamTask, updateTeamTask } from "@/context/teamContext";
+import { Team, TeamTask } from "@/models/Team";
 import {
   Button,
   DatePicker,

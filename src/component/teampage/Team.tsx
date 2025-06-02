@@ -1,13 +1,13 @@
 import { useEffect, useState, useContext, useCallback } from "react";
-import { getUserTeams } from "../../context/teamContext";
-import { UserContext } from "../../context/userContext";
-import { Team } from "../../models/Team";
-import { User } from "../../models/User";
+import { getUserTeams } from "@/context/teamContext";
+import { UserContext } from "@/context/userContext";
+import { Team } from "@/models/Team";
+import { User } from "@/models/User";
 
 import WidgetWrapper from "../WidgetWrapper";
-import axios from "../../api/axios";
+import axios from "@/api/axios";
 
-import "../../styles/components/TeamPage.css";
+import "@/styles/components/TeamPage.css";
 import CreateTeam from "./CreateTeam";
 import { Empty, Popover, Button } from "antd";
 import { BgColorsOutlined } from "@ant-design/icons";

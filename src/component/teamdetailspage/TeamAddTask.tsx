@@ -9,8 +9,8 @@ import {
   DatePicker,
 } from "antd";
 import { useState } from "react";
-import { Team } from "../../models/Team";
-import { addTeamTask } from "../../context/teamContext";
+import { Team } from "@/models/Team";
+import { addTeamTask } from "@/context/teamContext";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const TeamAddTask = ({

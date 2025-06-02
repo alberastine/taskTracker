@@ -1,6 +1,6 @@
 import { Button, Divider, Empty, List, Typography } from "antd";
 
-import { Team } from "../../models/Team";
+import { Team } from "@/models/Team";
 import InviteUser from "../teampage/InviteUser";
 
 const { Text } = Typography;

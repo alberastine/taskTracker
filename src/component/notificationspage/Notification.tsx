@@ -1,12 +1,12 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Team } from "../../models/Team";
-import { getUserTeams, respondToInvitation } from "../../context/teamContext";
-import { UserContext } from "../../context/userContext";
+import { Team } from "@/models/Team";
+import { getUserTeams, respondToInvitation } from "@/context/teamContext";
+import { UserContext } from "@/context/userContext";
 import { Button, Empty, message, Typography } from "antd";
 
 import WidgetWrapper from "../WidgetWrapper";
 
-import "../../styles/components/Notification.css";
+import "@/styles/components/Notification.css";
 import { Spinner } from "flowbite-react";
 
 const Notification = () => {

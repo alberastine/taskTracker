@@ -1,11 +1,11 @@
-import { Team } from "../../models/Team";
+import { Team } from "@/models/Team";
 import { useEffect, useState, useContext, useCallback } from "react";
-import { getUserTeams } from "../../context/teamContext";
-import { UserContext } from "../../context/userContext";
+import { getUserTeams } from "@/context/teamContext";
+import { UserContext } from "@/context/userContext";
 import { Card, Descriptions, Typography, Row, Col, Button } from "antd";
 import WidgetWrapper from "../WidgetWrapper";
-import DeleteTeam from "../../component/teampage/DeleteTeam";
-import LeaveTeam from "../../component/teampage/LeaveTeam";
+import DeleteTeam from "@/component/teampage/DeleteTeam";
+import LeaveTeam from "@/component/teampage/LeaveTeam";
 import TeamInviteUser from "./TeamInviteUser";
 import TeamJoinRequest from "./TeamJoinRequest";
 import TeamMembers from "./TeamMembers";
@@ -175,7 +175,7 @@ const TeamDetailsPage = ({
           <Descriptions.Item label="Created At">
             {createdAt.toLocaleDateString()} at {createdAt.toLocaleTimeString()}
           </Descriptions.Item>
-          <Descriptions.Item label="Leader">
+          <Descriptions.Item label="Team Leader">
             {team.leader_username}
           </Descriptions.Item>
           <Descriptions.Item label="Member Limit">

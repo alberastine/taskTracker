@@ -1,11 +1,11 @@
 import { Button, Modal, Form, Input, DatePicker, message, Select } from "antd";
 import { useState } from "react";
-import { Task } from "../../models/User";
-import { taskApi } from "../../api/taskApi";
+import { Task } from "@/models/User";
+import { taskApi } from "@/api/taskApi";
 
 import dayjs from "dayjs";
 
-import "../../styles/components/EditTask.css";
+import "@/styles/components/EditTask.css";
 import { LoadingOutlined } from "@ant-design/icons";
 
 interface TaskListEditDetailsProps {
