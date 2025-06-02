@@ -1,11 +1,11 @@
-import { Button, Divider, Empty, message, Table, Tag, Typography } from "antd";
+import { Divider, Empty, message, Table, Tag, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Team, TeamTask } from "@/models/Team";
 import { useContext, useMemo, useState } from "react";
 import { UserContext } from "@/context/userContext";
-// import TeamAssignUserTask from "./TeamAssignUserTask";
 import TeamAddTask from "./TeamAddTask";
 import TeamEditTask from "./TeamEditTask";
+import TeamClaimTask from "./TeamClaimTask";
 
 const { Text } = Typography;
 
@@ -35,27 +35,24 @@ const TeamTaskList = ({
     return null;
   };
 
-  const renderAssignedTo = (assignedTo: string) => {
+  const renderAssignedTo = (task: TeamTask) => {
     const assignedMember = team.members_lists.find(
-      (member) => member.user_id === assignedTo,
+      (member) => member.user_id === task.assigned_to,
     );
 
-    if (assignedTo) {
+    if (task.assigned_to) {
       return <Text>{assignedMember?.username}</Text>;
     }
 
-    return assignedMember && isLeader === undefined ? (
-      <Tag color="red">Not assigned</Tag>
-    ) : (
-      <Button
-        style={{
-          backgroundColor: "rgb(14 116 144)",
-          color: "white",
-          border: "none",
-        }}
-      >
-        Claim task
-      </Button>
+    return (
+      <span onClick={(e) => e.stopPropagation()}>
+        <TeamClaimTask
+          team={team}
+          taskId={task._id}
+          currentUser={currentUser?._id}
+          onTeamUpdated={onTeamUpdated}
+        />
+      </span>
     );
   };
 
@@ -91,7 +88,7 @@ const TeamTaskList = ({
       title: "Assigned To",
       dataIndex: "assigned_to",
       key: "assigned_to",
-      render: renderAssignedTo,
+      render: (_, task: TeamTask) => renderAssignedTo(task),
     },
   ];
 

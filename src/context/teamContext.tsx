@@ -23,12 +23,12 @@ export const addTeamTask = async (team_id: string, task: TeamTask) => {
   return response.data;
 };
 
-export const updateAssignTo = async (
+export const claimTeamTask = async (
   team_id: string,
   task_id: string,
   assign_to: string,
 ) => {
-  const response = await axios.put("/updateAssignTo", {
+  const response = await axios.put("/claimTeamTask", {
     team_id,
     task_id,
     assign_to,
