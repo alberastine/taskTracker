@@ -23,6 +23,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
 
   const fetchUser = async () => {
     try {
+      console.log("API BASE URL:", import.meta.env.VITE_API_URL);
       const res = await axios.get("/profile");
       setUser(res.data.user);
     } catch (err) {
