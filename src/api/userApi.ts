@@ -10,7 +10,9 @@ interface UpdateUserData {
 export const userApi = {
   getUserProfile: async () => {
     try {
-      const response = await axios.get("/profile");
+      const response = await axios.get("/profile", {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -86,7 +88,9 @@ export const userApi = {
 
   loginUser: async (credentials: { gmail: string; password: string }) => {
     try {
-      const response = await axios.post("/login", credentials);
+      const response = await axios.post("/login", credentials, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       console.error("Error logging in:", error);
